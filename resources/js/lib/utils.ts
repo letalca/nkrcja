@@ -28,3 +28,17 @@ export function handleServerError(error: unknown) {
     console.log('Server error', errMsg);
     toast({ variant: 'destructive', title: errMsg });
 }
+
+export const getInitials = (name: string): string => {
+    if (!name) return '';
+
+    const nameParts = name.trim().split(' ');
+
+    if (nameParts.length === 1) {
+        return nameParts[0][0].toUpperCase();
+    } else {
+        const firstInitial = nameParts[0][0].toUpperCase();
+        const lastInitial = nameParts[nameParts.length - 1][0].toUpperCase();
+        return `${firstInitial}${lastInitial}`;
+    }
+};
