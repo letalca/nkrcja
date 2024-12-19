@@ -14,17 +14,14 @@ import {
     SidebarMenuItem,
     useSidebar,
 } from '@/components/ui/sidebar';
+import { logout } from '@/hooks/logout';
 import { getInitials } from '@/lib/utils';
 import { User } from '@/types';
-import { router } from '@inertiajs/react';
-import { ChevronsUpDown, LogOut, UserCircle } from 'lucide-react';
+import { IconUser } from '@tabler/icons-react';
+import { ChevronsUpDown, LogOut } from 'lucide-react';
 
 export function NavUser({ user }: { user: User }) {
     const { isMobile } = useSidebar();
-
-    const logout = () => {
-        router.post(route('logout'));
-    };
 
     return (
         <SidebarMenu>
@@ -77,7 +74,7 @@ export function NavUser({ user }: { user: User }) {
                         <DropdownMenuSeparator />
                         <DropdownMenuGroup>
                             <DropdownMenuItem>
-                                <UserCircle />
+                                <IconUser />
                                 Profile
                             </DropdownMenuItem>
                         </DropdownMenuGroup>

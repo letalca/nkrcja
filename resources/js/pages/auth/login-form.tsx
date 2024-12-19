@@ -17,12 +17,20 @@ import { IconBrandGoogleFilled } from '@tabler/icons-react';
 import { useForm } from 'react-hook-form';
 import { LoginData, loginFormSchema } from './types';
 
-export default function LoginForm() {
+export default function LoginForm({
+    email,
+    password,
+    canSignInWithGoogle,
+}: {
+    email?: string;
+    password?: string;
+    canSignInWithGoogle: boolean;
+}) {
     const form = useForm<LoginData>({
         resolver: zodResolver(loginFormSchema),
         defaultValues: {
-            email: 'test@example.com',
-            password: 'password1234',
+            email: email ?? '',
+            password: password ?? '',
             remember: false,
         },
     });
@@ -92,32 +100,37 @@ export default function LoginForm() {
                         <Button className="mt-2" loading={isLoading}>
                             Login
                         </Button>
+                        {canSignInWithGoogle ? (
+                            <>
+                                <div className="relative my-2">
+                                    <div className="absolute inset-0 flex items-center">
+                                        <span className="w-full border-t" />
+                                    </div>
+                                    <div className="relative flex justify-center text-xs uppercase">
+                                        <span className="bg-background px-2 text-muted-foreground">
+                                            Or continue with
+                                        </span>
+                                    </div>
+                                </div>
 
-                        <div className="relative my-2">
-                            <div className="absolute inset-0 flex items-center">
-                                <span className="w-full border-t" />
-                            </div>
-                            <div className="relative flex justify-center text-xs uppercase">
-                                <span className="bg-background px-2 text-muted-foreground">
-                                    Or continue with
-                                </span>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                            <Button
-                                onClick={() => toast({ title: 'Coming soon!' })}
-                                variant="outline"
-                                className="w-full"
-                                type="button"
-                                loading={isLoading}
-                                leftSection={
-                                    <IconBrandGoogleFilled className="h-4 w-4" />
-                                }
-                            >
-                                Google
-                            </Button>
-                        </div>
+                                <div className="flex items-center gap-2">
+                                    <Button
+                                        onClick={() =>
+                                            toast({ title: 'Coming soon!' })
+                                        }
+                                        variant="outline"
+                                        className="w-full"
+                                        type="button"
+                                        loading={isLoading}
+                                        leftSection={
+                                            <IconBrandGoogleFilled className="h-4 w-4" />
+                                        }
+                                    >
+                                        Google
+                                    </Button>
+                                </div>
+                            </>
+                        ) : null}
                     </div>
                 </form>
             </Form>
