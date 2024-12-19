@@ -10,7 +10,6 @@ import BaseLayout from './base-layout';
 
 export default function Layout({ children }: PropsWithChildren) {
     const defaultOpen = Cookies.get('sidebar-state') !== 'false';
-    console.log(route().current());
     return (
         <>
             <SearchProvider>
