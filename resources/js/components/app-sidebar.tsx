@@ -14,31 +14,33 @@ import { NavGroup } from './nav-group';
 import { NavUser } from './nav-user';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-    const user = usePage().props.auth.user;
+type AppSidebarProps = React.ComponentProps<typeof Sidebar>;
+
+export function AppSidebar(props: AppSidebarProps) {
+    const { user, club } = usePage().props.auth;
     return (
         <Sidebar collapsible="icon" variant="floating" {...props}>
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg">
-                            <div className="text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+                            <div className="flex aspect-square size-8 items-center justify-center rounded-lg text-sidebar-primary-foreground">
                                 <Avatar className="size-8 rounded-lg">
                                     <AvatarImage
                                         src={NkrcCommunityLogo}
-                                        alt="@shadcn"
+                                        alt={`${club.name} Logo`}
                                     />
                                     <AvatarFallback className="rounded-lg">
-                                        NK
+                                        {club.abbr}
                                     </AvatarFallback>
                                 </Avatar>
                             </div>
                             <div className="grid flex-1 text-left text-sm leading-tight">
                                 <span className="truncate font-semibold">
-                                    Rotaract Club of New Kingston
+                                    {club.name}
                                 </span>
                                 <span className="truncate text-xs">
-                                    Zone 34 | District 7020
+                                    Zone {club.zone} | District {club.district}
                                 </span>
                             </div>
                         </SidebarMenuButton>

@@ -1,8 +1,15 @@
+export type UserRole =
+    | 'executive'
+    | 'chair'
+    | 'member'
+    | 'prospective'
+    | 'admin';
 export interface User {
-    id: number;
+    id: string;
     name: string;
+    firstName: string;
+    lastName: string;
     email: string;
-    email_verified_at?: string;
 }
 
 export type PageProps<
@@ -10,5 +17,12 @@ export type PageProps<
 > = T & {
     auth: {
         user: User;
+        club: {
+            name: string;
+            zone: string;
+            district: string;
+            country: string;
+            abbr: string;
+        };
     };
 };
