@@ -10,7 +10,7 @@ import { useSearch } from '@/context/search-context';
 import { IconArrowRightDashed } from '@tabler/icons-react';
 
 import React from 'react';
-import { navGroups } from './nav-group';
+import { navGroups } from './data/nav-groups';
 import { ScrollArea } from './ui/scroll-area';
 
 export function CommandMenu() {

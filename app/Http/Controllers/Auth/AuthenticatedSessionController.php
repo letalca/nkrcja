@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -18,9 +20,15 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): Response
     {
+        [$email, $password] = [null, null];
+        if ( ! app()->isProduction()) {
+            [$email, $password] = [config('nkrc.admin.email'), config('nkrc.admin.password')];
+        }
+
         return Inertia::render('auth/login', [
-            'canResetPassword' => Route::has('password.request'),
-            'status' => session('status'),
+            'canSignInWithGoogle' => config('nkrc.hasGoogleSignIn'),
+            'email' => $email,
+            'password' => $password,
         ]);
     }
 

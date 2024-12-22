@@ -42,3 +42,13 @@ export const getInitials = (name: string): string => {
         return `${firstInitial}${lastInitial}`;
     }
 };
+
+export const formatDate = (dateString: string): string => {
+    const date = new Date(dateString);
+    const formatter = new Intl.DateTimeFormat('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+    });
+    return formatter.format(date);
+};

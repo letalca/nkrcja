@@ -10,13 +10,11 @@ import {
     DropdownMenuShortcut,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { logout } from '@/hooks/logout';
 import { getInitials } from '@/lib/utils';
-import { router, usePage } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
 
 export function ProfileDropdown() {
-    const logout = () => {
-        router.post(route('logout'));
-    };
     const user = usePage().props.auth.user;
     return (
         <DropdownMenu>

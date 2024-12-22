@@ -1,0 +1,33 @@
+includes:
+    - ./vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - app/
+
+    level: 9
+
+    ignoreErrors:
+        # Ignore missing iterable value type
+        - identifier: missingType.iterableValue
+
+        # Ignore missing generics type
+        - identifier: missingType.generics
+
+        # Ignore undefined variable '$this' in tests
+        -
+            message: '#^Undefined variable\: \$this$#'
+            path: ./tests/*
+            reportUnmatched: false
+
+        # Ignore specific functions not found in Pest tests
+        -
+            message: '#^Function (something|<your Pest.php-defined util function name here>) not found\.$#'
+            path: ./tests/*
+            reportUnmatched: false
+
+        # Ignore access to undefined properties in tests
+        -
+            message: '#^Access to an undefined property#'
+            path: ./tests/*
+            reportUnmatched: false

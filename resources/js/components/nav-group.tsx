@@ -18,7 +18,6 @@ import { ChevronRight } from 'lucide-react';
 import { ReactNode } from 'react';
 
 import { Link } from '@inertiajs/react';
-import { IconLayoutDashboard } from '@tabler/icons-react';
 import { type NavGroup, NavItem } from './types';
 import { Badge } from './ui/badge';
 
@@ -129,17 +128,4 @@ function checkIsActive(item: NavItem, mainNav = false) {
     );
 }
 
-const navGroups: NavGroup[] = [
-    {
-        title: 'General',
-        items: [
-            {
-                title: 'Dashboard',
-                url: '/dashboard',
-                icon: IconLayoutDashboard,
-            },
-        ],
-    },
-];
-
-export { NavGroup, navGroups };
+export { NavGroup };
