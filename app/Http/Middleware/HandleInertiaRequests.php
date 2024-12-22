@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Middleware;
 
 use App\Http\Resources\UserResource;
@@ -41,8 +43,8 @@ class HandleInertiaRequests extends Middleware
                     'zone' => '34',
                     'district' => '7020',
                     'country' => 'Jamaica',
-                    'abbr' => 'NKRC'
-                ]
+                    'abbr' => 'NKRC',
+                ],
             ],
         ];
     }

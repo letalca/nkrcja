@@ -18,7 +18,7 @@ class MembershipController extends Controller
                 'name' => 'Status',
                 'options' => MembershipStatus::getFilters(),
                 'order' => 1,
-                'filter_key' => 'membership_status'
+                'filter_key' => 'membership_status',
             ],
         ];
 

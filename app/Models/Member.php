@@ -36,19 +36,6 @@ final class Member extends Model
     /** @use HasFactory<\Database\Factories\MemberFactory> */
     use HasFactory;
 
-    protected function casts(): array
-    {
-        return [
-            'address' => 'json',
-            'date_of_birth' => 'date',
-            'induction_date' => 'date',
-            'status' => Enums\MembershipStatus::class,
-            'gender' => Enums\Gender::class,
-            'membership_type' => Enums\MembershipType::class,
-            'good_standing' => 'boolean',
-        ];
-    }
-
     protected $hidden = [
         'created_at',
         'updated_at',
@@ -87,6 +74,19 @@ final class Member extends Model
             'date_of_birth' => $this->date_of_birth,
             'induction_date' => $this->induction_date,
             'age' => $this->age,
+        ];
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'address' => 'json',
+            'date_of_birth' => 'date',
+            'induction_date' => 'date',
+            'status' => Enums\MembershipStatus::class,
+            'gender' => Enums\Gender::class,
+            'membership_type' => Enums\MembershipType::class,
+            'good_standing' => 'boolean',
         ];
     }
 }

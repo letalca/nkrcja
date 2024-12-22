@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\ProfileController;
@@ -16,15 +18,15 @@ Route::get('/', function () {
     ]);
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth')->group(function (): void {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
     Route::get('/members', [MembershipController::class, 'index'])->name('members');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

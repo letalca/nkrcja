@@ -32,19 +32,6 @@ class MembershipRequest extends FormRequest
         ];
     }
 
-    private function getCollectionFromRequest(string $key): Collection
-    {
-        $collection = collect([]);
-
-        if ($this->has($key)) {
-            $values = (string) $this->get($key);
-            $decodedValues = base64_decode($values);
-            $collection = collect(explode(',', $decodedValues));
-        }
-
-        return $collection;
-    }
-
 
     public function paginate(): LengthAwarePaginator
     {
@@ -78,6 +65,19 @@ class MembershipRequest extends FormRequest
             ->transform(fn(Member $member) => $member->transform());
 
         return $data;
+    }
+
+    private function getCollectionFromRequest(string $key): Collection
+    {
+        $collection = collect([]);
+
+        if ($this->has($key)) {
+            $values = (string) $this->get($key);
+            $decodedValues = base64_decode($values);
+            $collection = collect(explode(',', $decodedValues));
+        }
+
+        return $collection;
     }
 
 
