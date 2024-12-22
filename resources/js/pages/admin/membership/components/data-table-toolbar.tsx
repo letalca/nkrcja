@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useSearchParams } from '@/hooks/useSearchParams';
+import { useRouterQuery } from '@/context/router-query-context';
 import { Filter } from '@/types';
 import { IconX } from '@tabler/icons-react';
 import { Table } from '@tanstack/react-table';
@@ -18,23 +18,24 @@ export function DataTableToolbar<TData>({
     table,
     filters,
 }: DataTableToolbarProps<TData>) {
-    const isFiltered = table.getState().columnFilters.length > 0;
-    const { setParams } = useSearchParams();
+    const { addQueries, removeQueries, has } = useRouterQuery();
     const debouncedResults = useMemo(() => {
         const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
             if (e.target.value.length >= 3) {
-                setParams({ query: e.target.value, page: '1' });
+                addQueries({ query: e.target.value, page: '1' });
             } else {
-                setParams({ query: '', page: '1' });
+                addQueries({ query: '' });
             }
         };
         return debounce(handleChange, 300);
-    }, [setParams]);
+    }, [addQueries]);
 
     useEffect(() => {
         return () => debouncedResults.cancel();
     });
-
+    //TODO: fix this. Doesnt work when selected filters are updated.
+    const filterKeys = [...filters.map((filter) => filter.filter_key), 'query'];
+    const isFiltered = has(filterKeys);
     return (
         <div className="flex items-center justify-between">
             <div className="flex flex-1 flex-col-reverse items-start gap-y-2 sm:flex-row sm:items-center sm:space-x-2">
@@ -58,7 +59,9 @@ export function DataTableToolbar<TData>({
                 {isFiltered && (
                     <Button
                         variant="ghost"
-                        onClick={() => table.resetColumnFilters()}
+                        onClick={() => {
+                            removeQueries(filterKeys);
+                        }}
                         className="h-8 px-2 lg:px-3"
                     >
                         Reset

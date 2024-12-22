@@ -8,4 +8,7 @@ return [
         'password' => env('ADMIN_PASSWORD'),
     ],
     'hasGoogleSignIn' => env('GOOGLE_CLIENT_ID') && env('GOOGLE_CLIENT_SECRET'),
+    'paginate' => [
+        'perPage' => 20,
+    ],
 ];

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Enums;
 
+use Illuminate\Support\Collection;
+
 enum MembershipStatus: int
 {
     use EnumExtension;
@@ -13,6 +15,11 @@ enum MembershipStatus: int
     case LeaveOfAbsence = 2;
     case Terminated = 3;
     case Resigned = 4;
+
+    public static function getValidMembers(): Collection
+    {
+        return collect([static::Active, static::Inactive, static::LeaveOfAbsence]);
+    }
 
     public function getLabel(): string
     {

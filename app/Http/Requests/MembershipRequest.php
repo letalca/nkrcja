@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
+use App\Enums\MembershipStatus;
 use App\Models\Member;
 use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
@@ -55,15 +56,17 @@ class MembershipRequest extends FormRequest
             ->when($membership_statuses->isNotEmpty(), function (Builder $builder) use ($membership_statuses): void {
                 $builder->whereIn('status', $membership_statuses->toArray());
             })
+            ->when($membership_statuses->isEmpty(), fn(Builder $builder) => (
+                $builder->whereIn('status', MembershipStatus::getValidMembers()->toArray())
+            ))
             ->when($membership_types->isNotEmpty(), function (Builder $builder) use ($membership_types): void {
                 $builder->whereIn('membership_type', $membership_types->toArray());
             })
-            ->paginate($this->integer('perPage', 10))
+            ->paginate($this->integer('perPage', config('nkrc.paginate.perPage')))
             ->withQueryString();
 
         $data->getCollection()
             ->transform(fn(Member $member) => $member->transform());
-
         return $data;
     }
 

@@ -52,7 +52,7 @@ export function MembershipTable({
         getFacetedUniqueValues: getFacetedUniqueValues(),
         initialState: {
             pagination: {
-                pageSize: Number(params.perPage ?? '10'),
+                pageSize: Number(params.perPage ?? '20'),
             },
         },
     });

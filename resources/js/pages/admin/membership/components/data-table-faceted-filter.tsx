@@ -15,7 +15,7 @@ import {
     PopoverTrigger,
 } from '@/components/ui/popover';
 import { Separator } from '@/components/ui/separator';
-import { useSearchParams } from '@/hooks/useSearchParams';
+import { useRouterQuery } from '@/context/router-query-context';
 import { cn } from '@/lib/utils';
 import { FilterOptions } from '@/types';
 import { IconCheck, IconCirclePlus } from '@tabler/icons-react';
@@ -35,20 +35,17 @@ export function DataTableFacetedFilter<TData, TValue>({
     options,
     filter_key,
 }: DataTableFacetedFilterProps<TData, TValue>) {
-    const { setParams, params } = useSearchParams();
-    const [selectedValues, setSelectedValues] = useState<string[]>([]);
+    const { addQuery, getQuery } = useRouterQuery();
 
-    useEffect(
-        () => {
-            console.log(params);
-            setParams({
-                ...params,
-                [filter_key]: btoa(selectedValues.join(',')),
-            });
-        },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [selectedValues],
+    const [selectedValues, setSelectedValues] = useState<string[]>(
+        atob(getQuery(filter_key) ?? '')
+            .split(',')
+            .filter((v) => v !== ''),
     );
+    useEffect(() => {
+        addQuery(filter_key, btoa(selectedValues.join(',')));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedValues]);
 
     return (
         <Popover>
@@ -124,13 +121,6 @@ export function DataTableFacetedFilter<TData, TValue>({
                                                     option.value.toString(),
                                                 ]);
                                             }
-                                            // const filterValues =
-                                            //     Array.from(selectedValues);
-                                            // setParams({
-                                            //     [filter_key]: btoa(
-                                            //         filterValues.join(','),
-                                            //     ),
-                                            // });
                                         }}
                                     >
                                         <div
@@ -157,9 +147,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                                     <CommandItem
                                         onSelect={() => {
                                             setSelectedValues([]);
-                                            setParams({
-                                                [filter_key]: '',
-                                            });
+                                            addQuery(filter_key, '');
                                         }}
                                         className="justify-center text-center"
                                     >

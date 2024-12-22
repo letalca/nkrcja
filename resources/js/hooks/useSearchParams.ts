@@ -19,7 +19,6 @@ export function useSearchParams() {
             }
         });
         const newUrl = `${window.location.pathname}?${searchParams.toString()}`;
-        console.log(newUrl);
         router.visit(newUrl, {
             preserveScroll: true,
             preserveState: true,

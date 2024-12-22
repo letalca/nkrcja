@@ -84,7 +84,6 @@ export const columns: ColumnDef<ClubMember>[] = [
         },
         filterFn: (row, columnId, filterValue: string[], addMeta) => {
             addMeta({ filterType: 'partial' });
-            // console.log(columnId, filterValue);
             return filterValue.includes(row.original.status.toLowerCase());
             // return true;
         },

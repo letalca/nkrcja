@@ -6,7 +6,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { useSearchParams } from '@/hooks/useSearchParams';
+import { useRouterQuery } from '@/context/router-query-context';
 import { PaginatedProps } from '@/types';
 import {
     IconChevronLeft,
@@ -25,7 +25,7 @@ export function DataTablePagination<TData>({
     table,
     paginated,
 }: DataTablePaginationProps<TData>) {
-    const { setParams } = useSearchParams();
+    const { addQuery } = useRouterQuery();
 
     const setPageNumber = (url?: string) => {
         let page: string = '1';
@@ -33,7 +33,7 @@ export function DataTablePagination<TData>({
             const searchParams = new URLSearchParams(url.split('?')[1]);
             page = searchParams.get('page') || page;
         }
-        setParams({ page: page });
+        addQuery('page', page);
     };
 
     return (
@@ -51,7 +51,7 @@ export function DataTablePagination<TData>({
                         value={`${paginated.per_page}`}
                         onValueChange={(value) => {
                             table.setPageSize(Number(value));
-                            setParams({ perPage: value });
+                            addQuery('perPage', value);
                         }}
                     >
                         <SelectTrigger className="h-8 w-[70px]">
