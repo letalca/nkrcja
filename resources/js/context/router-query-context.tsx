@@ -91,7 +91,7 @@ export const RouterQueryProvider: React.FC<PropsWithChildren> = ({
 
     const has = (keys: string | string[]): boolean => {
         if (Array.isArray(keys)) {
-            return keys.some((key) => key in query);
+            return keys.some((key) => key in query && query[key].length > 0);
         }
         return keys in query;
     };

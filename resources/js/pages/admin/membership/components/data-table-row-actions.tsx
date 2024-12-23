@@ -10,14 +10,12 @@ import {
 import { ClubMember } from '@/types';
 import { IconDots, IconEdit, IconTrash } from '@tabler/icons-react';
 import { Row } from '@tanstack/react-table';
-// import { useUsersContext } from '../context/users-context';
 
 interface DataTableRowActionsProps {
     row: Row<ClubMember>;
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-    // const { setOpen, setCurrentRow } = useUsersContext();
     return (
         <>
             <DropdownMenu modal={false}>

@@ -44,6 +44,7 @@ export const columns: ColumnDef<ClubMember>[] = [
                 <CopyToClipboard textToCopy={row.original.email} />
             </div>
         ),
+        enableHiding: false,
         enableSorting: false,
     },
     {
@@ -54,6 +55,7 @@ export const columns: ColumnDef<ClubMember>[] = [
                 <CopyToClipboard textToCopy={row.original.phone} />
             </div>
         ),
+        enableHiding: false,
         enableSorting: false,
     },
     {

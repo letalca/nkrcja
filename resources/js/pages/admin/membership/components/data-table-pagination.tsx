@@ -6,41 +6,20 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { useRouterQuery } from '@/context/router-query-context';
-import { PaginatedProps } from '@/types';
+import { useMembership } from '@/context/membership-provider-context';
 import {
     IconChevronLeft,
     IconChevronRight,
     IconChevronsLeft,
     IconChevronsRight,
 } from '@tabler/icons-react';
-import { Table } from '@tanstack/react-table';
 
-interface DataTablePaginationProps<TData> {
-    table: Table<TData>;
-    paginated: PaginatedProps;
-}
-
-export function DataTablePagination<TData>({
-    table,
-    paginated,
-}: DataTablePaginationProps<TData>) {
-    const { addQuery } = useRouterQuery();
-
-    const setPageNumber = (url?: string) => {
-        let page: string = '1';
-        if (url) {
-            const searchParams = new URLSearchParams(url.split('?')[1]);
-            page = searchParams.get('page') || page;
-        }
-        addQuery('page', page);
-    };
-
+export function DataTablePagination() {
+    const { paginated, pageSizes, nextPage, setPageSize } = useMembership();
     return (
         <div className="flex items-center justify-between overflow-auto px-2">
             <div className="hidden flex-1 text-sm text-muted-foreground sm:block">
-                {table.getFilteredSelectedRowModel().rows.length} of{' '}
-                {table.getFilteredRowModel().rows.length} row(s) selected.
+                {paginated.from} - {paginated.to} of {paginated.total} Members
             </div>
             <div className="flex items-center sm:space-x-6 lg:space-x-8">
                 <div className="flex items-center space-x-2">
@@ -49,16 +28,13 @@ export function DataTablePagination<TData>({
                     </p>
                     <Select
                         value={`${paginated.per_page}`}
-                        onValueChange={(value) => {
-                            table.setPageSize(Number(value));
-                            addQuery('perPage', value);
-                        }}
+                        onValueChange={setPageSize}
                     >
                         <SelectTrigger className="h-8 w-[70px]">
                             <SelectValue placeholder={paginated.per_page} />
                         </SelectTrigger>
                         <SelectContent side="top">
-                            {[10, 20, 30, 40, 50].map((pageSize) => (
+                            {pageSizes.map((pageSize) => (
                                 <SelectItem
                                     key={pageSize}
                                     value={`${pageSize}`}
@@ -76,7 +52,7 @@ export function DataTablePagination<TData>({
                     <Button
                         variant="outline"
                         className="hidden h-8 w-8 p-0 lg:flex"
-                        onClick={() => setPageNumber(paginated.first_page_url)}
+                        onClick={() => nextPage(paginated.first_page_url)}
                         disabled={paginated.current_page === 1}
                     >
                         <span className="sr-only">Go to first page</span>
@@ -87,7 +63,7 @@ export function DataTablePagination<TData>({
                         className="h-8 w-8 p-0"
                         onClick={() =>
                             paginated.prev_page_url
-                                ? setPageNumber(paginated.prev_page_url)
+                                ? nextPage(paginated.prev_page_url)
                                 : null
                         }
                         disabled={!paginated.prev_page_url}
@@ -100,7 +76,7 @@ export function DataTablePagination<TData>({
                         className="h-8 w-8 p-0"
                         onClick={() =>
                             paginated.next_page_url
-                                ? setPageNumber(paginated.next_page_url)
+                                ? nextPage(paginated.next_page_url)
                                 : null
                         }
                         disabled={!paginated.next_page_url}
@@ -111,7 +87,7 @@ export function DataTablePagination<TData>({
                     <Button
                         variant="outline"
                         className="hidden h-8 w-8 p-0 lg:flex"
-                        onClick={() => setPageNumber(paginated.last_page_url)}
+                        onClick={() => nextPage(paginated.last_page_url)}
                         disabled={
                             paginated.current_page === paginated.last_page
                         }

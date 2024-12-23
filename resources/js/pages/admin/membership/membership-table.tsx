@@ -1,18 +1,4 @@
 import {
-    ColumnDef,
-    // ColumnFiltersState,
-    flexRender,
-    getCoreRowModel,
-    getFacetedRowModel,
-    getFacetedUniqueValues,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
-    useReactTable,
-} from '@tanstack/react-table';
-// import { useState } from 'react';
-
-import {
     Table,
     TableBody,
     TableCell,
@@ -20,46 +6,17 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-
-import { useSearchParams } from '@/hooks/useSearchParams';
-import { ClubMember, Filter, PaginatedProps } from '@/types';
+import { useMembership } from '@/context/membership-provider-context';
+import { flexRender } from '@tanstack/react-table';
 import { DataTablePagination } from './components/data-table-pagination';
 import { DataTableToolbar } from './components/data-table-toolbar';
 
-interface DataTableProps {
-    columns: ColumnDef<ClubMember>[];
-    data: ClubMember[];
-    paginated: PaginatedProps;
-    filters: Filter[];
-}
-
-export function MembershipTable({
-    columns,
-    data,
-    paginated,
-    filters,
-}: DataTableProps) {
-    const { params } = useSearchParams();
-    const table = useReactTable({
-        data,
-        columns,
-        enableRowSelection: false,
-        getCoreRowModel: getCoreRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        getFacetedRowModel: getFacetedRowModel(),
-        getFacetedUniqueValues: getFacetedUniqueValues(),
-        initialState: {
-            pagination: {
-                pageSize: Number(params.perPage ?? '20'),
-            },
-        },
-    });
+export function MembershipTable() {
+    const { table, columns } = useMembership();
 
     return (
         <div className="space-y-4">
-            <DataTableToolbar table={table} filters={filters} />
+            <DataTableToolbar />
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
@@ -130,7 +87,7 @@ export function MembershipTable({
                     </TableBody>
                 </Table>
             </div>
-            <DataTablePagination table={table} paginated={paginated} />
+            <DataTablePagination />
         </div>
     );
 }

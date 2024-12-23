@@ -15,37 +15,25 @@ import {
     PopoverTrigger,
 } from '@/components/ui/popover';
 import { Separator } from '@/components/ui/separator';
-import { useRouterQuery } from '@/context/router-query-context';
+import { useMembership } from '@/context/membership-provider-context';
 import { cn } from '@/lib/utils';
 import { FilterOptions } from '@/types';
 import { IconCheck, IconCirclePlus } from '@tabler/icons-react';
-import { Column } from '@tanstack/react-table';
-import { useEffect, useState } from 'react';
-// import * as React from 'react';
 
-interface DataTableFacetedFilterProps<TData, TValue> {
-    column?: Column<TData, TValue>;
+interface DataTableFacetedFilterProps {
     title?: string;
     options: FilterOptions[];
     filter_key: string;
 }
 
-export function DataTableFacetedFilter<TData, TValue>({
+export function DataTableFacetedFilter({
     title,
     options,
     filter_key,
-}: DataTableFacetedFilterProps<TData, TValue>) {
-    const { addQuery, getQuery } = useRouterQuery();
-
-    const [selectedValues, setSelectedValues] = useState<string[]>(
-        atob(getQuery(filter_key) ?? '')
-            .split(',')
-            .filter((v) => v !== ''),
-    );
-    useEffect(() => {
-        addQuery(filter_key, btoa(selectedValues.join(',')));
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedValues]);
+}: DataTableFacetedFilterProps) {
+    const { getSelectedFilters, setSelectedFilters, clearFilters } =
+        useMembership();
+    const selectedValues = getSelectedFilters(filter_key);
 
     return (
         <Popover>
@@ -108,16 +96,17 @@ export function DataTableFacetedFilter<TData, TValue>({
                                         key={option.value}
                                         onSelect={() => {
                                             if (isSelected) {
-                                                setSelectedValues((svs) => {
-                                                    return svs.filter(
+                                                setSelectedFilters(
+                                                    filter_key,
+                                                    selectedValues.filter(
                                                         (sv) =>
                                                             sv !==
                                                             option.value.toString(),
-                                                    );
-                                                });
+                                                    ),
+                                                );
                                             } else {
-                                                setSelectedValues((svs) => [
-                                                    ...svs,
+                                                setSelectedFilters(filter_key, [
+                                                    ...selectedValues,
                                                     option.value.toString(),
                                                 ]);
                                             }
@@ -145,10 +134,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                                 <CommandSeparator />
                                 <CommandGroup>
                                     <CommandItem
-                                        onSelect={() => {
-                                            setSelectedValues([]);
-                                            addQuery(filter_key, '');
-                                        }}
+                                        onSelect={clearFilters}
                                         className="justify-center text-center"
                                     >
                                         Clear filters
