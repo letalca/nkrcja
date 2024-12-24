@@ -1,0 +1,21 @@
+import ContentSection from '@/components/content-section';
+import { ClubMember, PageProps } from '@/types';
+import FormLayout from './components/form-layout';
+
+type Props = PageProps & { data: ClubMember };
+
+export default function PersonalDataForm({ data }: Props) {
+    return (
+        <FormLayout
+            member={data}
+            subtitle="Manage membership data and update preferences"
+        >
+            <ContentSection
+                title="Personal Data"
+                desc="Manage membership data and update preferences"
+            >
+                <></>
+            </ContentSection>
+        </FormLayout>
+    );
+}

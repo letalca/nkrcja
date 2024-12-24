@@ -8,8 +8,8 @@ import {
 } from '@/components/ui/table';
 import { useMembership } from '@/context/membership-provider-context';
 import { flexRender } from '@tanstack/react-table';
-import { DataTablePagination } from './components/data-table-pagination';
-import { DataTableToolbar } from './components/data-table-toolbar';
+import { DataTablePagination } from './data-table-pagination';
+import { DataTableToolbar } from './data-table-toolbar';
 
 export function MembershipTable() {
     const { table, columns } = useMembership();

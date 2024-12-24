@@ -8,6 +8,7 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { ClubMember } from '@/types';
+import { router } from '@inertiajs/react';
 import { IconDots, IconEdit, IconTrash } from '@tabler/icons-react';
 import { Row } from '@tanstack/react-table';
 
@@ -31,8 +32,11 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
                 <DropdownMenuContent align="end" className="w-[160px]">
                     <DropdownMenuItem
                         onClick={() => {
-                            // setCurrentRow(row.original);
-                            // setOpen('edit');
+                            router.get(
+                                route('members.personal', {
+                                    member: `${row.original.id}`,
+                                }),
+                            );
                         }}
                     >
                         Edit
