@@ -2,11 +2,24 @@ import NkrcCommunityLogo from '@/assets/nkrc-community-logo.png';
 import CopyToClipboard from '@/components/copy-to-clipboard';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { toast } from '@/hooks/use-toast';
 import { cn, formatDate, getInitials } from '@/lib/utils';
 import { ClubMember } from '@/types';
+import { Link } from '@inertiajs/react';
 import { IconUsersGroup } from '@tabler/icons-react';
 import { ColumnDef } from '@tanstack/react-table';
 import { DataTableRowActions } from './data-table-row-actions';
+
+const showCopiedMessage = (value: string) => {
+    toast({
+        title: 'Copied!',
+        description: (
+            <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+                <code className="text-white">{value}</code>
+            </pre>
+        ),
+    });
+};
 
 export const columns: ColumnDef<ClubMember>[] = [
     {
@@ -23,7 +36,14 @@ export const columns: ColumnDef<ClubMember>[] = [
                         {getInitials(row.original.name)}
                     </AvatarFallback>
                 </Avatar>
-                {row.original.name}
+                <Link
+                    href={route('members.personal', {
+                        member: `${row.original.id}`,
+                    })}
+                    className="group inline-flex items-center space-x-1 hover:text-blue-400 hover:underline disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                    {row.original.name}
+                </Link>
             </div>
         ),
         meta: {
@@ -41,7 +61,10 @@ export const columns: ColumnDef<ClubMember>[] = [
         header: () => <div>Email</div>,
         cell: ({ row }) => (
             <div className="w-fit text-nowrap">
-                <CopyToClipboard textToCopy={row.original.email} />
+                <CopyToClipboard
+                    onCopySuccess={() => showCopiedMessage(row.original.email)}
+                    textToCopy={row.original.email}
+                />
             </div>
         ),
         enableHiding: false,
@@ -52,7 +75,10 @@ export const columns: ColumnDef<ClubMember>[] = [
         header: () => <div>Phone Number</div>,
         cell: ({ row }) => (
             <div>
-                <CopyToClipboard textToCopy={row.original.phone} />
+                <CopyToClipboard
+                    onCopySuccess={() => showCopiedMessage(row.original.phone)}
+                    textToCopy={row.original.phone}
+                />
             </div>
         ),
         enableHiding: false,
@@ -84,11 +110,6 @@ export const columns: ColumnDef<ClubMember>[] = [
                 </div>
             );
         },
-        filterFn: (row, columnId, filterValue: string[], addMeta) => {
-            addMeta({ filterType: 'partial' });
-            return filterValue.includes(row.original.status.toLowerCase());
-            // return true;
-        },
         enableSorting: false,
         enableHiding: false,
     },
@@ -108,7 +129,6 @@ export const columns: ColumnDef<ClubMember>[] = [
                 </div>
             );
         },
-        filterFn: 'weakEquals',
         enableSorting: false,
         enableHiding: false,
     },

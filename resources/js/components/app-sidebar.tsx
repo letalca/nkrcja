@@ -17,7 +17,11 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 type AppSidebarProps = React.ComponentProps<typeof Sidebar>;
 
 export function AppSidebar(props: AppSidebarProps) {
-    const { user, club } = usePage().props.auth;
+    const {
+        auth: { user },
+        config: { club },
+    } = usePage().props;
+
     return (
         <Sidebar collapsible="icon" variant="floating" {...props}>
             <SidebarHeader>

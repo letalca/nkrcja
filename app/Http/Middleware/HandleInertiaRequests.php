@@ -10,42 +10,27 @@ use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
 {
-    /**
-     * The root template that is loaded on the first page visit.
-     *
-     * @var string
-     */
     protected $rootView = 'app';
+    public static $sharedConfig = [];
 
-    /**
-     * Determine the current asset version.
-     */
     public function version(Request $request): ?string
     {
         return parent::version($request);
     }
 
-    /**
-     * Define the props that are shared by default.
-     *
-     * @return array<string, mixed>
-     */
     public function share(Request $request): array
     {
         /** @var \App\Models\User $user */
         $user = $request->user();
-        return [
-            ...parent::share($request),
+
+        return array_merge(parent::share($request), [
             'auth' => [
-                'user' => $user ? new UserResource($user) : null,
-                'club' => [
-                    'name' => 'Rotaract Club of New Kingston',
-                    'zone' => '34',
-                    'district' => '7020',
-                    'country' => 'Jamaica',
-                    'abbr' => 'NKRC',
-                ],
+                'user' => $user ? new UserResource($user) : [],
             ],
-        ];
+            'config' => array_merge(
+                ['club' => config('nkrc.club')],
+                config()->get(static::$sharedConfig),
+            ),
+        ]);
     }
 }

@@ -11,4 +11,12 @@ return [
     'paginate' => [
         'perPage' => 20,
     ],
+    'club' => [
+        'name' => env('APP_NAME'),
+        'zone' => env('CLUB_ZONE'),
+        'district' => env('CLUB_DISTRICT'),
+        'country' => env('CLUB_COUNTRY'),
+        'abbr' => env('CLUB_ABBR'),
+        'email' => env('CLUB_SUPPORT_EMAIL')
+    ]
 ];

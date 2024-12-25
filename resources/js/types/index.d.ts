@@ -39,19 +39,25 @@ export type ClubMember = {
     age?: number;
 };
 
+type ConfigProps<T> = T & {
+    club: {
+        name: string;
+        zone: string;
+        district: string;
+        country: string;
+        abbr: string;
+        email: string;
+    };
+};
+
 export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>,
+    U extends Record<string, unknown> = Record<string, unknown>,
 > = T & {
     auth: {
         user: User;
-        club: {
-            name: string;
-            zone: string;
-            district: string;
-            country: string;
-            abbr: string;
-        };
     };
+    config: ConfigProps<U>;
 };
 
 export type PaginationLink = {

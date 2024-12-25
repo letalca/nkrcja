@@ -1,10 +1,8 @@
 import ContentSection from '@/components/content-section';
-import { ClubMember, PageProps } from '@/types';
 import FormLayout from './components/form-layout';
+import { PageProps } from './types';
 
-type Props = PageProps & { data: ClubMember };
-
-export default function AddressForm({ data }: Props) {
+export default function AddressForm({ data }: PageProps) {
     return (
         <FormLayout member={data} subtitle="Manage address information">
             <ContentSection
