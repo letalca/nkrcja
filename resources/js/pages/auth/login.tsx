@@ -1,6 +1,6 @@
 import NkrcCommunityLogo from '@/assets/nkrc-community-logo.png';
 import NkrcLogoWhite from '@/assets/nkrc-logo-white.png';
-import { useAutoFocusFieldOnKeyPress } from '@/hooks/useAutoFocusFieldOnKeyPress';
+import { useAutoFocusFieldOnKeyPress } from '@/hooks/use-autofocus-field-on-key-press';
 import BaseLayout from '@/layouts/base-layout';
 import { PageProps } from '@/types';
 import { motion } from 'framer-motion';

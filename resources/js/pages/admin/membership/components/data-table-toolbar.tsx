@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useMembership } from '@/context/membership-provider-context';
-import { useRouterQuery } from '@/context/router-query-context';
+import { useMembershipTable } from '@/hooks/use-membership-table';
+import { useRouterQuery } from '@/hooks/use-router-query';
 import { IconX } from '@tabler/icons-react';
 import debounce from 'lodash/debounce';
 import {
@@ -19,7 +19,7 @@ const DEBOUNCE_DELAY = 300;
 
 export function DataTableToolbar() {
     const { addQueries, getQuery } = useRouterQuery();
-    const { filters } = useMembership();
+    const { filters, isTableFiltered, clearFilters } = useMembershipTable();
     const inputRef = useRef<HTMLInputElement>(null);
     const [searchValue, setSearchValue] = useState(
         () => getQuery('query') || '',
@@ -73,8 +73,6 @@ export function DataTableToolbar() {
             debouncedSearch.cancel();
         };
     }, [debouncedSearch]);
-
-    const { isTableFiltered, clearFilters } = useMembership();
 
     const filterComponents = useMemo(
         () =>

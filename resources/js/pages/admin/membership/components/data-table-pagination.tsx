@@ -6,7 +6,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { useMembership } from '@/context/membership-provider-context';
+import { useMembershipTable } from '@/hooks/use-membership-table';
 import {
     IconChevronLeft,
     IconChevronRight,
@@ -15,7 +15,8 @@ import {
 } from '@tabler/icons-react';
 
 export function DataTablePagination() {
-    const { paginated, pageSizes, nextPage, setPageSize } = useMembership();
+    const { paginated, pageSizes, nextPage, setPageSize } =
+        useMembershipTable();
     return (
         <div className="flex items-center justify-between overflow-auto px-2">
             <div className="hidden flex-1 text-sm text-muted-foreground sm:block">

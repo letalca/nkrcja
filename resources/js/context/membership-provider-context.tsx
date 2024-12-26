@@ -1,3 +1,4 @@
+import { useRouterQuery } from '@/hooks/use-router-query';
 import { ClubMember, Filter, PaginatedProps } from '@/types';
 import {
     ColumnDef,
@@ -15,12 +16,10 @@ import {
     FC,
     PropsWithChildren,
     useCallback,
-    useContext,
     useEffect,
     useMemo,
     useState,
 } from 'react';
-import { useRouterQuery } from './router-query-context';
 
 export interface MembershipProviderContextProps {
     paginated: PaginatedProps;
@@ -39,7 +38,7 @@ export interface MembershipProviderContextProps {
 
 type FilterState = Record<string, string[]>;
 
-const MembershipProviderContext = createContext<
+export const MembershipProviderContext = createContext<
     MembershipProviderContextProps | undefined
 >(undefined);
 
@@ -170,13 +169,4 @@ export const MembershipProvider: FC<MembershipProviderProps> = (props) => {
             {children}
         </MembershipProviderContext.Provider>
     );
-};
-
-export const useMembership = (): MembershipProviderContextProps => {
-    const context = useContext(MembershipProviderContext);
-    if (!context) {
-        throw new Error('useMembership must be withing a MembershipProvider');
-    }
-
-    return context;
 };

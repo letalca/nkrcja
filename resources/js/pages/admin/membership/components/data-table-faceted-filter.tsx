@@ -15,7 +15,7 @@ import {
     PopoverTrigger,
 } from '@/components/ui/popover';
 import { Separator } from '@/components/ui/separator';
-import { useMembership } from '@/context/membership-provider-context';
+import { useMembershipTable } from '@/hooks/use-membership-table';
 import { cn } from '@/lib/utils';
 import { FilterOptions } from '@/types';
 import { IconCheck, IconCirclePlus } from '@tabler/icons-react';
@@ -32,7 +32,7 @@ export function DataTableFacetedFilter({
     filter_key,
 }: DataTableFacetedFilterProps) {
     const { getSelectedFilters, setSelectedFilters, clearFilters } =
-        useMembership();
+        useMembershipTable();
     const selectedValues = getSelectedFilters(filter_key);
 
     return (

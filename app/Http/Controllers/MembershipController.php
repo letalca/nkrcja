@@ -33,6 +33,11 @@ class MembershipController extends Controller
         return Inertia::render('admin/membership/list', ['paginate' => $request->paginate(), 'filters' => $filters]);
     }
 
+    public function form(Member $member): Response
+    {
+        return Inertia::render('admin/membership/member-view-page', ['data' => $member->transform()]);
+    }
+
     public function personal(Member $member): Response
     {
         return Inertia::render('admin/membership/personal-data-form', ['data' => $member->transform()]);

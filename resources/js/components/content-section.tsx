@@ -1,13 +1,10 @@
-// import { ScrollArea } from '@/components/ui/scroll-area';
-// import { Separator } from '@/components/ui/separator';
-
+import { PropsWithChildren } from 'react';
 import { ScrollArea } from './ui/scroll-area';
 import { Separator } from './ui/separator';
 
-interface ContentSectionProps {
+interface ContentSectionProps extends PropsWithChildren {
     title: string;
     desc: string;
-    children: React.JSX.Element;
 }
 
 export default function ContentSection({

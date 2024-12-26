@@ -1,13 +1,7 @@
 import { router } from '@inertiajs/react';
-import {
-    createContext,
-    PropsWithChildren,
-    useContext,
-    useEffect,
-    useState,
-} from 'react';
+import { createContext, PropsWithChildren, useEffect, useState } from 'react';
 
-interface RouterQueryContextProps {
+export interface RouterQueryContextProps {
     query: Record<string, string>;
     addQuery: (key: string, value: string) => void;
     addQueries: (queries: Record<string, string>) => void;
@@ -17,9 +11,9 @@ interface RouterQueryContextProps {
     has: (key: string | string[]) => boolean;
 }
 
-const RouterQueryContext = createContext<RouterQueryContextProps | undefined>(
-    undefined,
-);
+export const RouterQueryContext = createContext<
+    RouterQueryContextProps | undefined
+>(undefined);
 
 export const RouterQueryProvider: React.FC<PropsWithChildren> = ({
     children,
@@ -111,14 +105,4 @@ export const RouterQueryProvider: React.FC<PropsWithChildren> = ({
             {children}
         </RouterQueryContext.Provider>
     );
-};
-
-export const useRouterQuery = (): RouterQueryContextProps => {
-    const context = useContext(RouterQueryContext);
-    if (!context) {
-        throw new Error(
-            'useRouterQuery must be used within a RouterQueryProvider',
-        );
-    }
-    return context;
 };

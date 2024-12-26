@@ -6,13 +6,13 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { useMembership } from '@/context/membership-provider-context';
+import { useMembershipTable } from '@/hooks/use-membership-table';
 import { flexRender } from '@tanstack/react-table';
 import { DataTablePagination } from './data-table-pagination';
 import { DataTableToolbar } from './data-table-toolbar';
 
 export function MembershipTable() {
-    const { table, columns } = useMembership();
+    const { table, columns } = useMembershipTable();
 
     return (
         <div className="space-y-4">

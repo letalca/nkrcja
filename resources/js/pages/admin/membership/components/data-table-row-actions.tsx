@@ -33,7 +33,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
                     <DropdownMenuItem
                         onClick={() => {
                             router.get(
-                                route('members.personal', {
+                                route('members.form', {
                                     member: `${row.original.id}`,
                                 }),
                             );
