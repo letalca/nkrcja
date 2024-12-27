@@ -9,8 +9,8 @@ use App\Enums\MembershipType;
 use App\Http\Requests\FormRequest;
 use App\Models\Member;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 class ListMembersRequest extends FormRequest
 {
@@ -49,10 +49,7 @@ class ListMembersRequest extends FormRequest
         $typeFilters = $this->getCollectionFromRequest('membership_type');
 
         $query = Member::query()
-            ->when(
-                $searchQuery,
-                $this->buildSearchQuery(...),
-            )
+            ->when($searchQuery, $this->buildSearchQuery())
             ->tap($this->applySort(...))
             ->tap($this->applyStatusFilters($statusFilters))
             ->tap($this->applyTypeFilters($typeFilters));
@@ -68,12 +65,13 @@ class ListMembersRequest extends FormRequest
 
     private function buildSearchQuery(): callable
     {
-        return function (Builder $builder, string $searchQuery): void {
+        return function (Builder $builder, string $searchQuery): Builder {
             $builder->where(function (Builder $innerBuilder) use ($searchQuery): void {
                 foreach (self::SEARCH_COLUMNS as $column) {
                     $innerBuilder->orWhere($column, 'ILIKE', "%{$searchQuery}%");
                 }
             });
+            return $builder;
         };
     }
 
