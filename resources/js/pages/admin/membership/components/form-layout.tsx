@@ -3,6 +3,7 @@ import { Main } from '@/components/main';
 import { PageHeader } from '@/components/page-header';
 import { useMembershipForm } from '@/hooks/use-membership-form';
 import Layout from '@/layouts/layout';
+import { AnimatePresence, motion } from 'framer-motion';
 import AddressForm from './forms/address-form';
 import ContactInfoForm from './forms/contact-info-form';
 import EducationInfoForm from './forms/education-info-form';
@@ -16,6 +17,7 @@ export default function FormLayout() {
         member,
         formConfig: { formType, forms },
     } = useMembershipForm();
+
     const renderForm = () => {
         if (formType === 'address') return <AddressForm />;
         if (formType === 'contact') return <ContactInfoForm />;
@@ -24,6 +26,30 @@ export default function FormLayout() {
         if (formType === 'personal') return <PersonalDataForm />;
         if (formType === 'image') return <ProfileImageUpload />;
     };
+
+    const slideAnimation = {
+        initial: {
+            opacity: 0,
+            x: 20,
+        },
+        animate: {
+            opacity: 1,
+            x: 0,
+            transition: {
+                duration: 0.3,
+                ease: 'easeOut',
+            },
+        },
+        exit: {
+            opacity: 0,
+            x: -20,
+            transition: {
+                duration: 0.2,
+                ease: 'easeIn',
+            },
+        },
+    };
+
     return (
         <Layout>
             <Main fixed>
@@ -40,7 +66,18 @@ export default function FormLayout() {
                             title={forms[formType].title}
                             desc={forms[formType].description}
                         >
-                            {renderForm()}
+                            <AnimatePresence mode="wait">
+                                <motion.div
+                                    key={formType}
+                                    initial="initial"
+                                    animate="animate"
+                                    exit="exit"
+                                    variants={slideAnimation}
+                                    className="w-full"
+                                >
+                                    {renderForm()}
+                                </motion.div>
+                            </AnimatePresence>
                         </ContentSection>
                     </div>
                 </div>
