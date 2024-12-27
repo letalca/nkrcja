@@ -29,11 +29,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::prefix('members')->group(function () {
         Route::get('/', [MembershipController::class, 'index'])->name('members');
         Route::get('/{member}', [MembershipController::class, 'form'])->name('members.form');
-        Route::get('/{member}/personal', [MembershipController::class, 'personal'])->name('members.personal');
-        Route::get('/{member}/contact', [MembershipController::class, 'contact'])->name('members.contact');
-        Route::get('/{member}/education', [MembershipController::class, 'address'])->name('members.education');
-        Route::get('/{member}/address', [MembershipController::class, 'education'])->name('members.address');
-        Route::get('/{member}/occupation', [MembershipController::class, 'occupation'])->name('members.occupation');
+        Route::post('/{member}/save/{form}', [MembershipController::class, 'save'])->name('members.save');
     });
 });
 

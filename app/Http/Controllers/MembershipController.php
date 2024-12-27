@@ -8,6 +8,8 @@ use App\Enums\MembershipStatus;
 use App\Enums\MembershipType;
 use App\Http\Requests\Membership\ListMembersRequest;
 use App\Models\Member;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -35,7 +37,37 @@ class MembershipController extends Controller
 
     public function form(Member $member): Response
     {
+        Inertia::share('config.maxFileSize', config('nkrc.maxFileSize'));
         return Inertia::render('admin/membership/member-view-page', ['data' => $member->transform()]);
+    }
+
+    public function save(Request $request, Member $member, string $form): \Illuminate\Http\RedirectResponse
+    {
+        if ('image' === $form) {
+            if ( ! $request->hasFile('image')) {
+                return back()->withErrors([
+                    'image' => 'No image provided',
+                ]);
+            }
+
+            $request->validate([
+                'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ]);
+
+            $file = $request->file('image');
+
+            $path = Storage::disk('public')->putFile('members', $file, 'public');
+
+            $member->update(['image' => Storage::url($path)]);
+
+            return back()->with([
+                'message' => 'Image uploaded successfully',
+            ]);
+        }
+
+        return back()->withErrors([
+            'form' => 'Invalid form type',
+        ]);
     }
 
     public function personal(Member $member): Response

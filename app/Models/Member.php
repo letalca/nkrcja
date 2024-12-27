@@ -74,6 +74,7 @@ final class Member extends Model
             'date_of_birth' => $this->date_of_birth,
             'induction_date' => $this->induction_date,
             'age' => $this->age,
+            'image' => asset($this->image),
         ];
     }
 

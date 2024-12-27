@@ -1,6 +1,8 @@
+import { ClubMember } from '@/types';
 import {
     IconAddressBook,
     IconBrandLinkedinFilled,
+    IconImageInPicture,
     IconMapPins,
     IconSchool,
     IconUser,
@@ -14,8 +16,10 @@ export const MembershipFormProvider: FC<MembershipFormProviderProps> = (
     props,
 ) => {
     const [formType, setFormType] = useState<FormType>('personal');
-    const [isFormDirty] = useState<boolean>(false);
-    const { children, member } = props;
+    const [isFormDirty, setIsFormDirty] = useState<boolean>(false);
+    const { children, member: clubMember } = props;
+
+    const [member, setMember] = useState<ClubMember>(clubMember);
 
     const switchForm = useCallback(
         (form: FormType) => {
@@ -46,6 +50,9 @@ export const MembershipFormProvider: FC<MembershipFormProviderProps> = (
             case 'address':
                 _icon = IconMapPins;
                 break;
+            case 'image':
+                _icon = IconImageInPicture;
+                break;
         }
         return <_icon size={18} />;
     };
@@ -68,6 +75,8 @@ export const MembershipFormProvider: FC<MembershipFormProviderProps> = (
                 forms: FORM_CONFIGS,
             },
             navItems: navitems,
+            setIsFormDirty,
+            updateMember: setMember,
         };
     }, [member, switchForm, formType, navitems]);
     return (

@@ -11,6 +11,7 @@ export interface User {
 }
 
 export type ClubMember = {
+    image?: string;
     id: number;
     rotary_id?: string;
     name: string;
@@ -31,10 +32,10 @@ export type ClubMember = {
         | 'Inactive'
         | 'Leave of Absence'
         | 'Termindated'
-        | 'Resigned'; // Expand with all possible statuses
+        | 'Resigned';
     is_in_good_standing: boolean;
     address?: string;
-    date_of_birth?: string; // Assuming ISO 8601 format
+    date_of_birth?: string;
     induction_date?: string;
     age?: number;
 };

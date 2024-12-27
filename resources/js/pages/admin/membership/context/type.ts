@@ -21,5 +21,7 @@ export type NavItem = {
 export type MembershipFormContextProps = {
     member: ClubMember;
     formConfig: FormConfig;
+    updateMember: (member: ClubMember) => void;
     navItems: NavItem[];
+    setIsFormDirty: (state: boolean) => void;
 };

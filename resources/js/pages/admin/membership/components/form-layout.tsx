@@ -8,6 +8,7 @@ import ContactInfoForm from './forms/contact-info-form';
 import EducationInfoForm from './forms/education-info-form';
 import EmploymentForm from './forms/employment-form';
 import PersonalDataForm from './forms/personal-data-form';
+import ProfileImageUpload from './forms/profile-image-upload';
 import SidebarNav from './side-bar-nav';
 
 export default function FormLayout() {
@@ -21,6 +22,7 @@ export default function FormLayout() {
         if (formType === 'education') return <EducationInfoForm />;
         if (formType === 'employment') return <EmploymentForm />;
         if (formType === 'personal') return <PersonalDataForm />;
+        if (formType === 'image') return <ProfileImageUpload />;
     };
     return (
         <Layout>

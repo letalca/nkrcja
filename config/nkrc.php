@@ -18,5 +18,6 @@ return [
         'country' => env('CLUB_COUNTRY'),
         'abbr' => env('CLUB_ABBR'),
         'email' => env('CLUB_SUPPORT_EMAIL')
-    ]
+    ],
+    'maxFileSize' => 5,
 ];

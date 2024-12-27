@@ -4,12 +4,17 @@ export const FORM_TYPES = {
     ADDRESS: 'address',
     EDUCATION: 'education',
     EMPLOYMENT: 'employment',
+    IMAGE: 'image',
 } as const;
 
 export const FORM_CONFIGS = {
     [FORM_TYPES.PERSONAL]: {
         title: 'Personal Info',
-        description: 'Manage membership data and update preferences',
+        description: 'Manage membership personal information',
+    },
+    [FORM_TYPES.IMAGE]: {
+        title: 'Profile Image',
+        description: 'Upload an image for this member',
     },
     [FORM_TYPES.CONTACT]: {
         title: 'Contact Info',
