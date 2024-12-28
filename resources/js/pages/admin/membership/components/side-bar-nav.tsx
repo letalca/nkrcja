@@ -7,9 +7,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { useMembershipForm } from '@/hooks/use-membership-form';
 import { cn } from '@/lib/utils';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useFormContext } from '../context/form/use-form-context';
 
 interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {}
 
@@ -17,7 +17,7 @@ export default function SidebarNav({ className, ...props }: SidebarNavProps) {
     const {
         formConfig: { setForm, formType },
         navItems,
-    } = useMembershipForm();
+    } = useFormContext();
 
     const itemVariants = {
         initial: {

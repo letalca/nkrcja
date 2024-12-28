@@ -1,9 +1,9 @@
 import ContentSection from '@/components/content-section';
 import { Main } from '@/components/main';
 import { PageHeader } from '@/components/page-header';
-import { useMembershipForm } from '@/hooks/use-membership-form';
 import Layout from '@/layouts/layout';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useFormContext } from '../context/form/use-form-context';
 import AddressForm from './forms/address-form';
 import ContactInfoForm from './forms/contact-info-form';
 import EducationInfoForm from './forms/education-info-form';
@@ -16,7 +16,7 @@ export default function FormLayout() {
     const {
         member,
         formConfig: { formType, forms },
-    } = useMembershipForm();
+    } = useFormContext();
 
     const renderForm = () => {
         if (formType === 'address') return <AddressForm />;

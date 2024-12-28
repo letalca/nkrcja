@@ -2,7 +2,6 @@ import { Button } from '@/components/button';
 import ImageCropDialog from '@/components/image-crop-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useCropImage } from '@/hooks/use-crop-image';
-import { useMembershipForm } from '@/hooks/use-membership-form';
 import { getInitials } from '@/lib/utils';
 import { ClubMember, PageProps } from '@/types';
 import { useForm, usePage } from '@inertiajs/react';
@@ -10,6 +9,7 @@ import { IconUpload, IconX } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 import { useRef } from 'react';
 import 'react-image-crop/dist/ReactCrop.css';
+import { useFormContext } from '../../context/form/use-form-context';
 
 // TODO: implement dropzone
 //https://github.com/shadcn-ui/ui/discussions/3188
@@ -18,9 +18,8 @@ import 'react-image-crop/dist/ReactCrop.css';
 type Props = PageProps<{}, { maxFileSize: number }>;
 
 export default function ProfileImageUpload() {
-    const { member } = useMembershipForm();
     const maxSize = usePage<Props>().props.config.maxFileSize;
-    const { setIsFormDirty, updateMember } = useMembershipForm();
+    const { setIsFormDirty, updateMember, member } = useFormContext();
     const {
         crop,
         setCrop,
