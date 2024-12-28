@@ -37,7 +37,7 @@ function NavGroup({ title, items }: NavGroup) {
                                     tooltip={item.title}
                                 >
                                     <Link
-                                        href={item.url}
+                                        href={route(item.url)}
                                         onClick={() => setOpenMobile(false)}
                                     >
                                         {item.icon && <item.icon />}
@@ -81,7 +81,9 @@ function NavGroup({ title, items }: NavGroup) {
                                                     )}
                                                 >
                                                     <Link
-                                                        href={subItem.url}
+                                                        href={route(
+                                                            subItem.url,
+                                                        )}
                                                         onClick={() =>
                                                             setOpenMobile(false)
                                                         }
@@ -117,15 +119,12 @@ const NavBadge = ({ children }: { children: ReactNode }) => (
 );
 
 function checkIsActive(item: NavItem, mainNav = false) {
-    const href = `/${route().current() ?? 'dashboard'}`;
-    return (
-        href === item.url || // /endpint?search=param
-        href.split('?')[0] === item.url || // endpoint
-        !!item?.items?.filter((i) => i.url === href).length || // if child nav is active
-        (mainNav &&
-            href.split('/')[1] !== '' &&
-            href.split('/')[1] === item?.url?.split('/')[1])
-    );
+    const href = (route().current() ?? 'dashboard').split('.')[0];
+    const url = (item.url ?? 'dashboard').split('.')[0];
+    if (mainNav) {
+        return (item.items || []).filter((i) => i.url === href).length > 0;
+    }
+    return href === url;
 }
 
 export { NavGroup };

@@ -1,4 +1,8 @@
-import { IconLayoutDashboard, IconUsers } from '@tabler/icons-react';
+import {
+    IconLayoutDashboard,
+    IconUsers,
+    IconUserSearch,
+} from '@tabler/icons-react';
 import { NavGroup } from '../types';
 
 export const navGroups: NavGroup[] = [
@@ -7,12 +11,23 @@ export const navGroups: NavGroup[] = [
         items: [
             {
                 title: 'Dashboard',
-                url: '/dashboard',
+                url: 'dashboard',
                 icon: IconLayoutDashboard,
             },
+        ],
+    },
+    {
+        title: 'Club',
+        items: [
             {
                 title: 'Membership',
-                url: '/members',
+                items: [
+                    {
+                        title: 'Members',
+                        url: 'members',
+                        icon: IconUserSearch,
+                    },
+                ],
                 icon: IconUsers,
             },
         ],

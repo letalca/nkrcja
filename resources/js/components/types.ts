@@ -8,11 +8,11 @@ interface BaseNavItem {
 
 export type NavItem =
     | (BaseNavItem & {
-          items: (BaseNavItem & { url: `/${KnownRouteName}` })[];
+          items: (BaseNavItem & { url: KnownRouteName })[];
           url?: never;
       })
     | (BaseNavItem & {
-          url: `/${KnownRouteName}`;
+          url: KnownRouteName;
           items?: never;
       });
 

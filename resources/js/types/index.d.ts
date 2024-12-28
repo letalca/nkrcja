@@ -59,8 +59,13 @@ export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>,
     U extends Record<string, unknown> = Record<string, unknown>,
 > = T & {
+    error: object;
     auth: {
         user: User;
+    };
+    flash?: {
+        message?: string;
+        error?: string;
     };
     config: ConfigProps<U>;
 };
