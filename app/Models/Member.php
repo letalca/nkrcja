@@ -23,8 +23,8 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property string $last_name
  * @property string $middle_name
  * @property Enums\Gender $gender
- * @property Enums\MembershipType $membership_type
- * @property Enums\MembershipStatus $status
+ * @property Enums\Members\Type $membership_type
+ * @property Enums\Members\Status $status
  * @property bool $good_standing
  * @property array $address
  * @property \Carbon\Carbon $date_of_birth
@@ -122,9 +122,9 @@ final class Member extends Model implements HasMedia
             'address' => 'json',
             'date_of_birth' => 'date',
             'induction_date' => 'date',
-            'status' => Enums\MembershipStatus::class,
+            'status' => Enums\Members\Status::class,
             'gender' => Enums\Gender::class,
-            'membership_type' => Enums\MembershipType::class,
+            'membership_type' => Enums\Members\Type::class,
             'good_standing' => 'boolean',
         ];
     }

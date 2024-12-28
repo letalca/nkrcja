@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Enums;
+namespace App\Enums\Members;
 
+use App\Enums\EnumExtension;
 use Illuminate\Support\Collection;
 
-enum MembershipStatus: int
+enum Status: int
 {
     use EnumExtension;
 

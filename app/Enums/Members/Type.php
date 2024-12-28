@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Enums;
+namespace App\Enums\Members;
 
-enum MembershipType: int
+use App\Enums\EnumExtension;
+
+enum Type: int
 {
     use EnumExtension;
 

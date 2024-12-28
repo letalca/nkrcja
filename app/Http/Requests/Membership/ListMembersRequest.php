@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Membership;
 
-use App\Enums\MembershipStatus;
-use App\Enums\MembershipType;
+use App\Enums\Members;
 use App\Http\Requests\FormRequest;
 use App\Models\Member;
 use Illuminate\Database\Eloquent\Builder;
@@ -88,7 +87,7 @@ class ListMembersRequest extends FormRequest
             if ($statusFilters->isNotEmpty()) {
                 $query->whereIn('status', $statusFilters->toArray());
             } else {
-                $query->whereIn('status', MembershipStatus::getValidMembers()->toArray());
+                $query->whereIn('status', Members\Status::getValidMembers()->toArray());
             }
         };
     }
@@ -99,7 +98,7 @@ class ListMembersRequest extends FormRequest
             if ($typeFilters->isNotEmpty()) {
                 $query->whereIn('membership_type', $typeFilters->toArray());
             } else {
-                $query->whereNotIn('membership_type', [MembershipType::Alumni->value]);
+                $query->whereNotIn('membership_type', [Members\Type::Alumni->value]);
             }
         };
     }

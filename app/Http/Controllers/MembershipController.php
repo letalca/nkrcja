@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Actions\Members\SaveImageAction;
-use App\Enums\MembershipStatus;
-use App\Enums\MembershipType;
+use App\Enums\Members;
 use App\Http\Requests\Membership\ListMembersRequest;
 use App\Models\Member;
 use Illuminate\Http\RedirectResponse;
@@ -20,13 +19,13 @@ class MembershipController extends Controller
         $filters = [
             [
                 'name' => 'Status',
-                'options' => MembershipStatus::getFilters(),
+                'options' => Members\Status::getFilters(),
                 'order' => 1,
                 'filter_key' => 'membership_status',
             ],
             [
                 'name' => 'Type',
-                'options' => MembershipType::getFilters(),
+                'options' => Members\Type::getFilters(),
                 'order' => 1,
                 'filter_key' => 'membership_type',
             ],
