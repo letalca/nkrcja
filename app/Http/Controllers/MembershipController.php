@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Actions\Members\SaveImageAction;
 use App\Enums\Members;
+use App\Enums\Members\FormType;
 use App\Http\Requests\Membership\ListMembersRequest;
 use App\Models\Member;
 use Illuminate\Http\RedirectResponse;
@@ -41,18 +41,9 @@ class MembershipController extends Controller
         return Inertia::render('admin/membership/member-view-page', ['data' => $member->transform()]);
     }
 
-    public function save(int $memberId, string $form): RedirectResponse
+    public function save(int $memberId, FormType $form): RedirectResponse
     {
-        if ('image' === $form) {
-            (new SaveImageAction($memberId))->execute();
-
-            return back()->with([
-                'message' => 'Image uploaded successfully',
-            ]);
-        }
-
-        return back()->withErrors([
-            'form' => 'Invalid form type',
-        ]);
+        $form->save($memberId);
+        return back()->with(['message' => $form->message()]);
     }
 }

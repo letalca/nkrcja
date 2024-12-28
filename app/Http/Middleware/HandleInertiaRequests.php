@@ -10,8 +10,8 @@ use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
 {
-    protected $rootView = 'app';
     public static $sharedConfig = [];
+    protected $rootView = 'app';
 
     public function version(Request $request): ?string
     {
@@ -26,6 +26,9 @@ class HandleInertiaRequests extends Middleware
         return array_merge(parent::share($request), [
             'auth' => [
                 'user' => $user ? new UserResource($user) : [],
+            ],
+            'flash' => [
+                'message' => $request->session()->get('message'),
             ],
             'config' => array_merge(
                 ['club' => config('nkrc.club')],

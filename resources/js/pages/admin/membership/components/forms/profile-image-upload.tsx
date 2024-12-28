@@ -15,8 +15,8 @@ import { useFormContext } from '../../context/form/use-form-context';
 // TODO: implement dropzone
 //https://github.com/shadcn-ui/ui/discussions/3188
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-type Props = PageProps<{}, { maxFileSize: number }>;
+type Props = PageProps<{ data: ClubMember }, { maxFileSize: number }>;
+type ResponseWithMessage = Props & { flash: { message: string } };
 
 export default function ProfileImageUpload() {
     const maxSize = usePage<Props>().props.config.maxFileSize;
@@ -53,20 +53,22 @@ export default function ProfileImageUpload() {
 
         post(route('members.save', { memberId: member.id, form: 'image' }), {
             onSuccess: (response) => {
+                const props: ResponseWithMessage =
+                    response.props as unknown as ResponseWithMessage;
                 toast({
-                    description: 'Image successfully uploaded!',
+                    description: props.flash.message,
                     variant: 'success',
                 });
-                updateMember(response.props.data as ClubMember);
+                updateMember(props.data);
             },
-            onError: (v) => {
+            onError: (error) => {
                 toast({
                     title: 'Failed to upload image',
                     variant: 'destructive',
                     description: (
                         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
                             <code className="text-white">
-                                {JSON.stringify(v)}
+                                {JSON.stringify(error)}
                             </code>
                         </pre>
                     ),
