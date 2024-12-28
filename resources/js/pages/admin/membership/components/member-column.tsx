@@ -1,4 +1,3 @@
-import NkrcCommunityLogo from '@/assets/nkrc-community-logo.png';
 import CopyToClipboard from '@/components/copy-to-clipboard';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -29,7 +28,7 @@ export const columns: ColumnDef<ClubMember>[] = [
             <div className="flex flex-row items-center text-nowrap">
                 <Avatar className="mr-6 size-8 rounded-lg">
                     <AvatarImage
-                        src={NkrcCommunityLogo}
+                        src={row.original.images?.thumb ?? undefined}
                         alt={row.original.name}
                     />
                     <AvatarFallback className="rounded-lg">
