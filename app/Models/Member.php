@@ -8,6 +8,9 @@ use App\Enums;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 // TODO: write a phone class: https://github.com/Propaganistas/Laravel-Phone?tab=readme-ov-file
 
@@ -31,10 +34,13 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read string $name
  *
  */
-final class Member extends Model
+final class Member extends Model implements HasMedia
 {
     /** @use HasFactory<\Database\Factories\MemberFactory> */
     use HasFactory;
+    use InteractsWithMedia;
+
+    public static $mediaKey = 'member-profile-image';
 
     protected $hidden = [
         'created_at',
@@ -74,8 +80,40 @@ final class Member extends Model
             'date_of_birth' => $this->date_of_birth,
             'induction_date' => $this->induction_date,
             'age' => $this->age,
-            'image' => asset($this->image),
+            'images' => $this->getAllMediaUrls(),
         ];
+    }
+
+    public function getAllMediaUrls(): array
+    {
+        $media = $this->getFirstMedia(static::$mediaKey);
+
+        if ( ! $media) {
+            return [
+                'original' => null,
+                'thumb' => null,
+                'medium' => null,
+            ];
+        }
+
+        return [
+            'original' => $media->getUrl(),
+            'thumb' => $media->getUrl('thumb'),
+            'medium' => $media->getUrl('medium'),
+        ];
+    }
+
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this->addMediaConversion('thumb')
+            ->width(100)
+            ->height(100)
+            ->performOnCollections(static::$mediaKey);
+
+        $this->addMediaConversion('medium')
+            ->width(400)
+            ->height(400)
+            ->performOnCollections(static::$mediaKey);
     }
 
     protected function casts(): array

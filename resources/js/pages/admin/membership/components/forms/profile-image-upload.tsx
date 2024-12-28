@@ -2,6 +2,7 @@ import { Button } from '@/components/button';
 import ImageCropDialog from '@/components/image-crop-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useCropImage } from '@/hooks/use-crop-image';
+import { toast } from '@/hooks/use-toast';
 import { getInitials } from '@/lib/utils';
 import { ClubMember, PageProps } from '@/types';
 import { useForm, usePage } from '@inertiajs/react';
@@ -32,7 +33,7 @@ export default function ProfileImageUpload() {
         handleCropComplete,
         tempImage,
         setTempImage,
-    } = useCropImage({ maxSize: maxSize, defaultImage: member.image });
+    } = useCropImage({ maxSize: maxSize, defaultImage: member.images?.medium });
 
     const { setData, progress, post, processing } = useForm<{
         image: File | undefined | null;
@@ -50,11 +51,26 @@ export default function ProfileImageUpload() {
         event.preventDefault();
         if (!preview) return;
 
-        post(route('members.save', { member: member.id, form: 'image' }), {
-            onSuccess: (response) =>
-                updateMember(response.props.data as ClubMember),
+        post(route('members.save', { memberId: member.id, form: 'image' }), {
+            onSuccess: (response) => {
+                toast({
+                    description: 'Image successfully uploaded!',
+                    variant: 'success',
+                });
+                updateMember(response.props.data as ClubMember);
+            },
             onError: (v) => {
-                console.log(v);
+                toast({
+                    title: 'Failed to upload image',
+                    variant: 'destructive',
+                    description: (
+                        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+                            <code className="text-white">
+                                {JSON.stringify(v)}
+                            </code>
+                        </pre>
+                    ),
+                });
             },
             onFinish: () => {
                 setIsFormDirty(false);

@@ -4,6 +4,6 @@ export interface RouteList {
     logout: undefined;
     members: undefined;
     'password.request': undefined;
-    'members.form': { member: string };
-    'members.save': { member: string; form: string };
+    'members.form': { memberId: int };
+    'members.save': { memberId: int; form: string };
 }

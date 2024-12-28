@@ -38,7 +38,7 @@ export const columns: ColumnDef<ClubMember>[] = [
                 </Avatar>
                 <Link
                     href={route('members.form', {
-                        member: `${row.original.id}`,
+                        memberId: `${row.original.id}`,
                     })}
                     className="group inline-flex items-center space-x-1 hover:text-blue-400 hover:underline disabled:cursor-not-allowed disabled:opacity-50"
                 >

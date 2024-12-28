@@ -11,7 +11,11 @@ export interface User {
 }
 
 export type ClubMember = {
-    image?: string;
+    images?: {
+        medium?: string | null;
+        original?: string | null;
+        thumb?: string | null;
+    };
     id: number;
     rotary_id?: string;
     name: string;

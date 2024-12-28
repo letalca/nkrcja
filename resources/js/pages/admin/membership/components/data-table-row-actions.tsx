@@ -34,7 +34,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
                         onClick={() => {
                             router.get(
                                 route('members.form', {
-                                    member: `${row.original.id}`,
+                                    memberId: `${row.original.id}`,
                                 }),
                             );
                         }}

@@ -26,10 +26,10 @@ Route::middleware('auth')->group(function (): void {
 
 Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
-    Route::prefix('members')->group(function () {
+    Route::prefix('members')->group(function (): void {
         Route::get('/', [MembershipController::class, 'index'])->name('members');
-        Route::get('/{member}', [MembershipController::class, 'form'])->name('members.form');
-        Route::post('/{member}/save/{form}', [MembershipController::class, 'save'])->name('members.save');
+        Route::get('/{memberId}', [MembershipController::class, 'form'])->name('members.form');
+        Route::post('/{memberId}/save/{form}', [MembershipController::class, 'save'])->name('members.save');
     });
 });
 
