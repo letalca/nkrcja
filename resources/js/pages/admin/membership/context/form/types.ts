@@ -1,4 +1,4 @@
-import { ClubMember } from '@/types';
+import { ClubMember, FilterOptions } from '@/types';
 import {
     IconAddressBook,
     IconBrandLinkedinFilled,
@@ -79,6 +79,9 @@ export type FormContextProps = {
     updateMember: (member: ClubMember) => void;
     navItems: NavItem[];
     setIsFormDirty: (state: boolean) => void;
+    statuses: FilterOptions[];
+    types: FilterOptions[];
+    genders: FilterOptions[];
 };
 
 export const FormContext = createContext<FormContextProps | undefined>(
@@ -87,4 +90,7 @@ export const FormContext = createContext<FormContextProps | undefined>(
 
 export type FormProviderProps = PropsWithChildren & {
     member: ClubMember;
+    membershipStatuses: FilterOptions[];
+    membershipTypes: FilterOptions[];
+    genders: FilterOptions[];
 };

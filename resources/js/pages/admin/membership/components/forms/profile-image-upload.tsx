@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useCropImage } from '@/hooks/use-crop-image';
 import { toast } from '@/hooks/use-toast';
 import { getInitials } from '@/lib/utils';
-import { ClubMember, PageProps } from '@/types';
+import { ClubMember, PageProps, ResponseWithMessage } from '@/types';
 import { useForm, usePage } from '@inertiajs/react';
 import { IconUpload, IconX } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
@@ -16,7 +16,6 @@ import { useFormContext } from '../../context/form/use-form-context';
 //https://github.com/shadcn-ui/ui/discussions/3188
 
 type Props = PageProps<{ data: ClubMember }, { maxFileSize: number }>;
-type ResponseWithMessage = Props & { flash: { message: string } };
 
 export default function ProfileImageUpload() {
     const maxSize = usePage<Props>().props.config.maxFileSize;
@@ -53,12 +52,21 @@ export default function ProfileImageUpload() {
 
         post(route('members.save', { memberId: member.id, form: 'image' }), {
             onSuccess: (response) => {
-                const props: ResponseWithMessage =
-                    response.props as unknown as ResponseWithMessage;
-                toast({
-                    description: props.flash.message,
-                    variant: 'success',
-                });
+                const props = response.props as unknown as ResponseWithMessage<{
+                    data: ClubMember;
+                }>;
+                const flash = props.flash;
+                if (flash.has_error) {
+                    toast({
+                        description: flash.error,
+                        variant: 'destructive',
+                    });
+                } else {
+                    toast({
+                        description: flash.message,
+                        variant: 'success',
+                    });
+                }
                 updateMember(props.data);
             },
             onError: (error) => {

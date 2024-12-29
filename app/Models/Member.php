@@ -16,6 +16,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
  * Member class
+ * @property string $rotary_id
  * @property string $email
  * @property string $primary_phone_number
  * @property string $secondary_phone_number
@@ -65,16 +66,16 @@ final class Member extends Model implements HasMedia
     {
         return [
             'id' => $this->id,
-            'rotary_id' => str()->random(10),
+            'rotary_id' => $this->rotary_id,
             'name' => $this->name,
             'email' => $this->email,
             'phone' => $this->primary_phone_number,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
             'middle_name' => $this->middle_name,
-            'gender' => $this->gender?->getLabel(),
-            'membership_type' => $this->membership_type?->getLabel(),
-            'status' => $this->status?->getLabel(),
+            'gender' => Enums\Gender::asSelectable($this->gender),
+            'membership_type' => Enums\Members\Type::asSelectable($this->membership_type),
+            'status' => Enums\Members\Status::asSelectable($this->status),
             'is_in_good_standing' => $this->good_standing,
             'address' => $this->address,
             'date_of_birth' => $this->date_of_birth,

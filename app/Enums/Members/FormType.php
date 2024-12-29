@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Enums\Members;
 
+use App\Actions\Members\SavePersonalDataAction;
 use App\Actions\Members\SaveImageAction;
 use App\Enums\EnumExtension;
 use Exception;
@@ -23,7 +24,7 @@ enum FormType: string
     {
         match ($this) {
             self::IMAGE => (new SaveImageAction($memberId))->execute(),
-            self::PERSONAL => throw new Exception('Not yet implemented'),
+            self::PERSONAL => (new SavePersonalDataAction($memberId))->execute(),
             self::CONTACT => throw new Exception('Not yet implemented'),
             self::ADDRESS => throw new Exception('Not yet implemented'),
             self::EDUCATION => throw new Exception('Not yet implemented'),
@@ -35,6 +36,7 @@ enum FormType: string
     {
         return match ($this) {
             self::IMAGE => 'Image uploaded successfully!',
+            self::PERSONAL => 'Data has been updated successfully.'
         };
     }
 }
