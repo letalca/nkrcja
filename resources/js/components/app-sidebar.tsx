@@ -19,7 +19,7 @@ type AppSidebarProps = React.ComponentProps<typeof Sidebar>;
 export function AppSidebar(props: AppSidebarProps) {
     const {
         auth: { user },
-        config: { club },
+        club,
     } = usePage().props;
 
     return (

@@ -16,7 +16,7 @@ export default function Login({
     email,
     password,
     canSignInWithGoogle,
-    config,
+    club,
 }: LoginPageProps) {
     useAutoFocusFieldOnKeyPress('input[type="email"]');
 
@@ -103,7 +103,7 @@ export default function Login({
                         <p className="px-2 text-center text-sm text-muted-foreground">
                             Need help?{' '}
                             <a
-                                href={`mailto:${config.club.email}`}
+                                href={`mailto:${club.email}`}
                                 className="underline underline-offset-4 hover:text-primary"
                             >
                                 Contact support

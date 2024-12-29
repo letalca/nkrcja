@@ -10,6 +10,25 @@ export interface User {
     email: string;
 }
 
+type SelectField<T extends string = string> = {
+    value: string;
+    label: T;
+};
+
+type MembershipType =
+    | 'Club Member'
+    | 'Honorary Member'
+    | 'Prospective Member'
+    | 'Alumni';
+
+type MembershipStatus =
+    | 'Active'
+    | 'Resigned'
+    | 'Inactive'
+    | 'Leave of Absence'
+    | 'Termindated'
+    | 'Resigned';
+
 export type ClubMember = {
     images?: {
         medium?: string | null;
@@ -24,19 +43,9 @@ export type ClubMember = {
     first_name: string;
     last_name: string;
     middle_name?: string;
-    gender: 'Male' | 'Female';
-    membership_type:
-        | 'Club Member'
-        | 'Honorary Member'
-        | 'Prospective Member'
-        | 'Alumni';
-    status:
-        | 'Active'
-        | 'Resigned'
-        | 'Inactive'
-        | 'Leave of Absence'
-        | 'Termindated'
-        | 'Resigned';
+    gender?: SelectField;
+    membership_type: SelectField<MembershipType>;
+    status?: SelectField<MembershipStatus>;
     is_in_good_standing: boolean;
     address?: string;
     date_of_birth?: string;
@@ -44,7 +53,17 @@ export type ClubMember = {
     age?: number;
 };
 
-type ConfigProps<T> = T & {
+type ConfigProps<T> = T & object;
+
+export type PageProps<
+    T extends Record<string, unknown> = Record<string, unknown>,
+    U extends Record<string, unknown> = Record<string, unknown>,
+> = T & {
+    error: object;
+    auth: {
+        user: User;
+    };
+    config: ConfigProps<U>;
     club: {
         name: string;
         zone: string;
@@ -55,19 +74,18 @@ type ConfigProps<T> = T & {
     };
 };
 
-export type PageProps<
+export type ResponseWithMessage<
     T extends Record<string, unknown> = Record<string, unknown>,
-    U extends Record<string, unknown> = Record<string, unknown>,
-> = T & {
-    error: object;
-    auth: {
-        user: User;
-    };
-    flash?: {
-        message?: string;
-        error?: string;
-    };
-    config: ConfigProps<U>;
+> = PageProps<T, unknown> & {
+    flash:
+        | {
+              message: string;
+              has_error: false;
+          }
+        | {
+              error: string;
+              has_error: true;
+          };
 };
 
 export type PaginationLink = {
