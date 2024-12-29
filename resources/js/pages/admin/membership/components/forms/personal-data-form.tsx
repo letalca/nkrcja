@@ -4,7 +4,7 @@ import { TextFormField } from '@/components/form-fields/text-form-field';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { toast } from '@/hooks/use-toast';
-import { handleServerError } from '@/lib/utils';
+import { handleApiError } from '@/lib/handle-api-error';
 import { ClubMember, ResponseWithMessage } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { router } from '@inertiajs/react';
@@ -45,30 +45,6 @@ export default function PersonalDataForm() {
         defaultValues,
     });
 
-    const handleError = (error: unknown) => {
-        console.log(error);
-        if (typeof error === 'object' && error && 'message' in error) {
-            toast({
-                title: 'Error',
-                description: (
-                    <div>
-                        <span className="text-white">
-                            Failed to update personal information.
-                        </span>
-                        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-                            <code className="text-white">
-                                {JSON.stringify(error)}
-                            </code>
-                        </pre>
-                    </div>
-                ),
-                variant: 'destructive',
-            });
-        } else {
-            handleServerError(error);
-        }
-    };
-
     async function onSubmit(data: PersonalFormValues) {
         await new Promise<void>((res) => {
             router.post(
@@ -78,7 +54,8 @@ export default function PersonalDataForm() {
                 }),
                 data,
                 {
-                    onError: handleError,
+                    onError: (e) =>
+                        handleApiError(e, 'update personal information'),
                     onSuccess: (response) => {
                         const props =
                             response.props as unknown as ResponseWithMessage<{
@@ -86,19 +63,18 @@ export default function PersonalDataForm() {
                             }>;
 
                         const flash = props.flash;
-                        if (flash.has_error === true) {
-                            toast({
-                                variant: 'destructive',
-                                description: flash.error,
-                            });
-                        } else {
-                            toast({
-                                variant: 'success',
-                                description: flash.message,
-                            });
+                        toast({
+                            variant: flash.has_error
+                                ? 'destructive'
+                                : 'success',
+                            description: flash.has_error
+                                ? flash.error
+                                : flash.message,
+                        });
+                        if (!flash.has_error) {
+                            updateMember(props.data);
+                            form.reset(getDefaultValues(props.data));
                         }
-                        updateMember(props.data);
-                        form.reset(getDefaultValues(props.data));
                     },
                     onFinish: () => {
                         setIsFormDirty(false);

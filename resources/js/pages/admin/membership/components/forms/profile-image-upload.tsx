@@ -3,6 +3,7 @@ import ImageCropDialog from '@/components/image-crop-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useCropImage } from '@/hooks/use-crop-image';
 import { toast } from '@/hooks/use-toast';
+import { handleApiError } from '@/lib/handle-api-error';
 import { getInitials } from '@/lib/utils';
 import { ClubMember, PageProps, ResponseWithMessage } from '@/types';
 import { useForm, usePage } from '@inertiajs/react';
@@ -69,19 +70,7 @@ export default function ProfileImageUpload() {
                 }
                 updateMember(props.data);
             },
-            onError: (error) => {
-                toast({
-                    title: 'Failed to upload image',
-                    variant: 'destructive',
-                    description: (
-                        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-                            <code className="text-white">
-                                {JSON.stringify(error)}
-                            </code>
-                        </pre>
-                    ),
-                });
-            },
+            onError: (e) => handleApiError(e, 'upload image'),
             onFinish: () => {
                 setIsFormDirty(false);
             },
