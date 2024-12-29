@@ -18,4 +18,15 @@ enum Gender: int
             self::Female => 'Female',
         };
     }
+
+    public static function asSelectable(?Gender $gender = null): array | null
+    {
+        if ( ! $gender) {
+            return null;
+        }
+        return [
+            'value' => $gender->value,
+            'label' => $gender->getLabel(),
+        ];
+    }
 }

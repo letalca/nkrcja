@@ -15,6 +15,21 @@ enum Type: int
     case ProspectiveMember = 2;
     case Alumni = 3;
 
+    public static function asSelectable(?Type $status = null, bool $withDefault = true): array | null
+    {
+        if ( ! $status) {
+            return $withDefault ?
+            [
+                'value' => static::ProspectiveMember->value,
+                'label' => static::ProspectiveMember->getLabel(),
+            ] : null;
+        }
+        return [
+            'value' => $status->value,
+            'label' => $status->getLabel(),
+        ];
+    }
+
     public function getLabel(): string
     {
         return match ($this) {

@@ -8,7 +8,13 @@ import {
 } from './types';
 
 export const FormProvider: FC<FormProviderProps> = (props) => {
-    const { children, member: clubMember } = props;
+    const {
+        children,
+        member: clubMember,
+        membershipStatuses,
+        membershipTypes,
+        genders,
+    } = props;
     const [formType, setFormType] = useState<FormType>('personal');
     const [isFormDirty, setIsFormDirty] = useState(false);
     const [member, setMember] = useState(clubMember);
@@ -44,8 +50,19 @@ export const FormProvider: FC<FormProviderProps> = (props) => {
             navItems: navitems,
             setIsFormDirty,
             updateMember: setMember,
+            statuses: membershipStatuses,
+            types: membershipTypes,
+            genders: genders,
         };
-    }, [member, switchForm, formType, navitems]);
+    }, [
+        member,
+        switchForm,
+        formType,
+        navitems,
+        membershipStatuses,
+        membershipTypes,
+        genders,
+    ]);
 
     return (
         <FormContext.Provider value={value}>{children}</FormContext.Provider>

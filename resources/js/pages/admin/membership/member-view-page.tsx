@@ -1,12 +1,27 @@
 'use client';
-import { ClubMember, PageProps } from '@/types';
+import { ClubMember, FilterOptions, PageProps } from '@/types';
 import FormLayout from './components/form-layout';
 import { FormProvider } from './context/form/form-provider';
 
-type Props = PageProps<{ data: ClubMember }>;
-export default function MemberViewPage({ data: member }: Props) {
+type Props = PageProps<
+    { data: ClubMember },
+    {
+        status: FilterOptions[];
+        type: FilterOptions[];
+        gender: FilterOptions[];
+    }
+>;
+export default function MemberViewPage({
+    data: member,
+    config: { status, type, gender },
+}: Props) {
     return (
-        <FormProvider member={member}>
+        <FormProvider
+            member={member}
+            membershipStatuses={status}
+            membershipTypes={type}
+            genders={gender}
+        >
             <FormLayout />
         </FormProvider>
     );

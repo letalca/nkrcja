@@ -22,6 +22,17 @@ enum Status: int
         return collect([static::Active, static::Inactive, static::LeaveOfAbsence]);
     }
 
+    public static function asSelectable(?Status $status = null): array | null
+    {
+        if ( ! $status) {
+            return null;
+        }
+        return [
+            'value' => $status->value,
+            'label' => $status->getLabel(),
+        ];
+    }
+
     public function getLabel(): string
     {
         return match ($this) {
