@@ -31,6 +31,7 @@ export const SelectFormField = <
         render,
         name,
         label,
+        disabled,
         placeholder = 'Select',
         control,
         options,
@@ -43,6 +44,7 @@ export const SelectFormField = <
             <Select
                 onValueChange={field.onChange}
                 defaultValue={`${field.value}`}
+                disabled={disabled}
             >
                 <FormControl>
                     <SelectTrigger>

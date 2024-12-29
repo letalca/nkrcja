@@ -104,7 +104,7 @@ export const columns: ColumnDef<ClubMember>[] = [
                             'border-teal-200 bg-teal-100/30 text-teal-900 dark:text-teal-200',
                         )}
                     >
-                        {row.original.status}
+                        {row.original.status?.label ?? ''}
                     </Badge>
                 </div>
             );
@@ -123,7 +123,7 @@ export const columns: ColumnDef<ClubMember>[] = [
                         className="text-muted-foreground"
                     />
                     <span className="text-sm capitalize">
-                        {row.getValue('membership_type')}
+                        {row.original.membership_type.label}
                     </span>
                 </div>
             );

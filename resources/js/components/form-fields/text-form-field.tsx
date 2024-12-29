@@ -17,6 +17,7 @@ export const TextFormField = <
 ) => {
     const {
         render,
+        disabled,
         name,
         label,
         placeholder = '',
@@ -28,7 +29,11 @@ export const TextFormField = <
         <FormItem>
             {label ? <FormLabel>{label}</FormLabel> : null}
             <FormControl>
-                <Input placeholder={placeholder} {...field} />
+                <Input
+                    placeholder={placeholder}
+                    {...field}
+                    disabled={disabled}
+                />
             </FormControl>
             <FormMessage />
         </FormItem>
