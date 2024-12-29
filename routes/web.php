@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Enums\Members\FormType;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\ProfileController;
@@ -29,7 +30,9 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::prefix('members')->group(function (): void {
         Route::get('/', [MembershipController::class, 'index'])->name('members');
         Route::get('/{memberId}', [MembershipController::class, 'form'])->name('members.form');
-        Route::post('/{memberId}/save/{form}', [MembershipController::class, 'save'])->name('members.save');
+        Route::post('/{memberId}/save/{form}', [MembershipController::class, 'save'])
+            ->name('members.save')
+            ->whereIn('form', FormType::cases());
     });
 });
 
