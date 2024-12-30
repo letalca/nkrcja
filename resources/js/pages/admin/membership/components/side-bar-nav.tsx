@@ -1,4 +1,4 @@
-import { buttonVariants } from '@/components/ui/conf/button-variants';
+import { Button } from '@/components/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
     Select,
@@ -12,6 +12,8 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useFormContext } from '../context/form/use-form-context';
 
 interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {}
+
+const MotionButton = motion.create(Button);
 
 export default function SidebarNav({ className, ...props }: SidebarNavProps) {
     const {
@@ -46,7 +48,6 @@ export default function SidebarNav({ className, ...props }: SidebarNavProps) {
             },
         },
         selected: {
-            backgroundColor: '#f1f5f9',
             scale: 1,
             opacity: 1,
             transition: {
@@ -118,27 +119,27 @@ export default function SidebarNav({ className, ...props }: SidebarNavProps) {
                     <AnimatePresence>
                         {navItems.map((item, index) => {
                             return (
-                                <motion.button
+                                <MotionButton
+                                    id={item.form}
                                     type="button"
-                                    key={item.form}
-                                    title={`Form ${item.form}`}
-                                    onClick={() => setForm(item.form)}
-                                    className={cn(
-                                        buttonVariants({ variant: 'ghost' }),
-                                        'justify-start text-slate-900',
-                                        // formType === item.form &&
-                                        //     'bg-slate-100 hover:bg-slate-100',
-                                    )}
                                     variants={itemVariants}
                                     initial="initial"
+                                    variant="ghost"
+                                    key={item.form}
+                                    className={cn(
+                                        'justify-start text-slate-900',
+                                        formType === item.form &&
+                                            'bg-slate-100',
+                                    )}
+                                    onClick={() => setForm(item.form)}
+                                    whileHover="hover"
+                                    whileTap="active"
+                                    custom={index}
                                     animate={
                                         formType === item.form
                                             ? 'selected'
                                             : 'animate'
                                     }
-                                    whileHover="hover"
-                                    whileTap="active"
-                                    custom={index}
                                 >
                                     <motion.span
                                         className="mr-2 text-slate-900"
@@ -148,7 +149,7 @@ export default function SidebarNav({ className, ...props }: SidebarNavProps) {
                                         {item.icon}
                                     </motion.span>
                                     {item.title}
-                                </motion.button>
+                                </MotionButton>
                             );
                         })}
                     </AnimatePresence>
