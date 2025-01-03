@@ -24,6 +24,7 @@ import {
     IconTrashFilled,
     IconUser,
 } from '@tabler/icons-react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import { AdditionalDetailsTab } from './tabs/additional-details-tab';
 import { BasicDetailsTab } from './tabs/basic-details-tab';
@@ -35,6 +36,21 @@ interface MemberDetailsDialogProps {
     onOpenChange: (open: boolean) => void;
     onDelete?: () => void;
 }
+
+const tabVariants = {
+    enter: {
+        y: 20,
+        opacity: 0,
+    },
+    center: {
+        y: 0,
+        opacity: 1,
+    },
+    exit: {
+        y: -20,
+        opacity: 0,
+    },
+};
 
 const MemberDetailsDialog = ({
     member,
@@ -51,12 +67,17 @@ const MemberDetailsDialog = ({
             })
           ? 'Rotaractor'
           : 'Past Rotaractor';
-    console.log(member.address);
+
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="max-w-lg overflow-hidden">
                 <DialogHeader>
-                    <div className="flex items-center justify-between">
+                    <motion.div
+                        className="flex items-center justify-between"
+                        initial={{ y: -20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.1 }}
+                    >
                         <div>
                             <DialogTitle className="text-xl">
                                 Membership Details
@@ -65,21 +86,31 @@ const MemberDetailsDialog = ({
                                 <DialogDescription />
                             </VisuallyHidden>
                         </div>
-                    </div>
+                    </motion.div>
                 </DialogHeader>
 
                 <div className="grid gap-6">
-                    <div className="mb-6 flex items-center justify-between">
+                    <motion.div
+                        className="mb-6 flex items-center justify-between"
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.2 }}
+                    >
                         <div className="flex items-center space-x-4">
-                            <Avatar className="h-16 w-16">
-                                <AvatarImage
-                                    src={member.images?.thumb || ''}
-                                    alt={member.name}
-                                />
-                                <AvatarFallback>
-                                    {getInitials(member.name)}
-                                </AvatarFallback>
-                            </Avatar>
+                            <motion.div
+                                whileHover={{ scale: 1.05 }}
+                                transition={{ type: 'spring', stiffness: 300 }}
+                            >
+                                <Avatar className="h-16 w-16">
+                                    <AvatarImage
+                                        src={member.images?.thumb || ''}
+                                        alt={member.name}
+                                    />
+                                    <AvatarFallback>
+                                        {getInitials(member.name)}
+                                    </AvatarFallback>
+                                </Avatar>
+                            </motion.div>
                             <div>
                                 <p className="text-sm text-muted-foreground">
                                     {title}
@@ -117,26 +148,31 @@ const MemberDetailsDialog = ({
                             </div>
                         </div>
                         <div className="flex space-x-2">
-                            <Link
-                                className={buttonVariants({
-                                    size: 'icon',
-                                    variant: 'ghost',
-                                })}
-                                href={route('members.form', {
-                                    memberId: `${member.id}`,
-                                })}
-                            >
-                                <IconEdit className="h-4 w-4 text-primary" />
-                            </Link>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={onDelete}
-                            >
-                                <IconTrashFilled className="h-4 w-4 text-destructive" />
-                            </Button>
+                            <motion.div whileHover={{ scale: 1.1 }}>
+                                <Link
+                                    className={buttonVariants({
+                                        size: 'icon',
+                                        variant: 'ghost',
+                                    })}
+                                    href={route('members.form', {
+                                        memberId: `${member.id}`,
+                                    })}
+                                >
+                                    <IconEdit className="h-4 w-4 text-primary" />
+                                </Link>
+                            </motion.div>
+                            <motion.div whileHover={{ scale: 1.1 }}>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={onDelete}
+                                >
+                                    <IconTrashFilled className="h-4 w-4 text-destructive" />
+                                </Button>
+                            </motion.div>
                         </div>
-                    </div>
+                    </motion.div>
+
                     <Tabs
                         value={activeTab}
                         onValueChange={setActiveTab}
@@ -155,9 +191,26 @@ const MemberDetailsDialog = ({
                                 Additional
                             </TabsTrigger>
                         </TabsList>
-                        <BasicDetailsTab {...member} />
-                        <MembershipDetailsTab {...member} />
-                        <AdditionalDetailsTab {...member} />
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                key={activeTab}
+                                variants={tabVariants}
+                                initial="enter"
+                                animate="center"
+                                exit="exit"
+                                transition={{ duration: 0.2 }}
+                            >
+                                {activeTab === 'basic' && (
+                                    <BasicDetailsTab {...member} />
+                                )}
+                                {activeTab === 'membership' && (
+                                    <MembershipDetailsTab {...member} />
+                                )}
+                                {activeTab === 'additional' && (
+                                    <AdditionalDetailsTab {...member} />
+                                )}
+                            </motion.div>
+                        </AnimatePresence>
                     </Tabs>
                 </div>
             </DialogContent>

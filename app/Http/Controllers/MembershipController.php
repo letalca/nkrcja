@@ -11,7 +11,6 @@ use App\Http\Requests\Membership\ListMembersRequest;
 use App\Models\Member;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Config;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -39,7 +38,7 @@ class MembershipController extends Controller
 
     public function form(int $memberId): Response
     {
-        $member = Member::with('media')->findOrFail($memberId);
+        $member = Member::withRelationships()->findOrFail($memberId);
         Inertia::share('config', [
             'maxFileSize' => config('nkrc.maxFileSize'),
             'status' => Members\Status::getFilters(),
