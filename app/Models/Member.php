@@ -8,6 +8,7 @@ use App\Enums;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -23,15 +24,16 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property string $first_name
  * @property string $last_name
  * @property string $middle_name
+ * @property array $age
  * @property Enums\Gender $gender
  * @property Enums\Members\Type $membership_type
  * @property Enums\Members\Status $status
  * @property bool $good_standing
- * @property array $address
- * @property \Carbon\Carbon $date_of_birth
- * @property \Carbon\Carbon $induction_date
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property Address $address
+ * @property \Carbon\CarbonImmutable $date_of_birth
+ * @property \Carbon\CarbonImmutable $induction_date
+ * @property \Carbon\CarbonImmutable $created_at
+ * @property \Carbon\CarbonImmutable $updated_at
  * @property-read string $name
  *
  */
@@ -46,7 +48,15 @@ final class Member extends Model implements HasMedia
     protected $hidden = [
         'created_at',
         'updated_at',
+        'address_id',
     ];
+
+    public static function withRelationships($relationships = []): \Illuminate\Database\Eloquent\Builder
+    {
+        $relationships = array_merge(['address', 'media'], $relationships);
+        $relationships = array_unique(array_merge(['address', 'media'], $relationships));
+        return static::with($relationships);
+    }
 
     public function name(): Attribute
     {
@@ -58,7 +68,17 @@ final class Member extends Model implements HasMedia
     public function age(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->date_of_birth?->age,
+            get: function (): array {
+                $july = now()->startOfYear()->addMonths(7);
+                $ageAtNextJuly = null;
+                if ($this->date_of_birth) {
+                    $ageAtNextJuly = (int) $this->date_of_birth->diffInYears($july);
+                }
+                return [
+                    'current' => $this->date_of_birth?->age,
+                    'nextJuly' => $ageAtNextJuly,
+                ];
+            },
         );
     }
 
@@ -77,11 +97,13 @@ final class Member extends Model implements HasMedia
             'membership_type' => Enums\Members\Type::asSelectable($this->membership_type),
             'status' => Enums\Members\Status::asSelectable($this->status),
             'is_in_good_standing' => $this->good_standing,
-            'address' => $this->address,
-            'date_of_birth' => $this->date_of_birth,
-            'induction_date' => $this->induction_date,
+            'address' => $this->address?->transform(),
+            'date_of_birth' => formattedDate($this->date_of_birth),
+            'induction_date' => formattedDate($this->induction_date),
             'age' => $this->age,
             'images' => $this->getAllMediaUrls(),
+            'current_club_position' => 50 === $this->id ? 'Membership Chair' : null,
+            'years_active' => formatDateDifference($this->induction_date),
         ];
     }
 
@@ -117,12 +139,18 @@ final class Member extends Model implements HasMedia
             ->performOnCollections(static::$mediaKey);
     }
 
+    public function address(): BelongsTo
+    {
+        return $this->belongsTo(Address::class);
+    }
+
     protected function casts(): array
     {
         return [
-            'address' => 'json',
-            'date_of_birth' => 'date',
-            'induction_date' => 'date',
+            'date_of_birth' => 'immutable_date',
+            'created_at' => 'immutable_date',
+            'updated_at' => 'immutable_date',
+            'induction_date' => 'immutable_date',
             'status' => Enums\Members\Status::class,
             'gender' => Enums\Gender::class,
             'membership_type' => Enums\Members\Type::class,

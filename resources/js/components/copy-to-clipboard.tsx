@@ -1,3 +1,4 @@
+import { toast } from '@/hooks/use-toast';
 import { IconClipboard, IconClipboardCheck } from '@tabler/icons-react';
 import { useCallback, useEffect, useState } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
@@ -8,9 +9,22 @@ interface CopyToClipboardProps {
     copiedDuration?: number;
     onCopySuccess?: () => void;
     onCopyError?: (error: Error) => void;
+    textClass?: string;
+    showCopiedMessage?: boolean | typeof showToastMessage;
 }
 
 const DEFAULT_COPIED_DURATION = 2000;
+
+const showToastMessage = (value: string) => {
+    toast({
+        title: 'Copied!',
+        description: (
+            <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+                <code className="text-white">{value}</code>
+            </pre>
+        ),
+    });
+};
 
 const CopyToClipboard = ({
     textToCopy,
@@ -18,6 +32,8 @@ const CopyToClipboard = ({
     copiedDuration = DEFAULT_COPIED_DURATION,
     onCopySuccess,
     onCopyError,
+    showCopiedMessage = false,
+    textClass = '',
 }: CopyToClipboardProps) => {
     const [copied, setCopied] = useState(false);
     const [error, setError] = useState<Error | null>(null);
@@ -41,6 +57,11 @@ const CopyToClipboard = ({
             await navigator.clipboard.writeText(textToCopy);
             setCopied(true);
             setError(null);
+            if (showCopiedMessage) {
+                typeof showCopiedMessage === 'boolean'
+                    ? showToastMessage(textToCopy)
+                    : showCopiedMessage(textToCopy);
+            }
             onCopySuccess?.();
 
             const timeoutId = setTimeout(() => {
@@ -55,7 +76,13 @@ const CopyToClipboard = ({
             setError(error);
             onCopyError?.(error);
         }
-    }, [textToCopy, copiedDuration, onCopySuccess, onCopyError]);
+    }, [
+        textToCopy,
+        copiedDuration,
+        onCopySuccess,
+        onCopyError,
+        showCopiedMessage,
+    ]);
 
     const displayLabel = label || textToCopy;
     const tooltipMessage = error
@@ -73,7 +100,7 @@ const CopyToClipboard = ({
                     aria-label={`Copy ${displayLabel} to clipboard`}
                     disabled={error !== null}
                 >
-                    <span>{displayLabel}</span>
+                    <span className={textClass}>{displayLabel}</span>
                     <span className="flex-shrink-0" aria-hidden="true">
                         {!copied ? (
                             <IconClipboard className="size-3 opacity-0 group-hover:opacity-100" />

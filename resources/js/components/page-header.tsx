@@ -1,7 +1,7 @@
 import { Button } from '@/components/button';
 import { type VariantProps } from 'class-variance-authority';
 import { ElementType } from 'react';
-import { buttonVariants } from './ui/conf/button-variants';
+import { buttonVariants } from './ui/button';
 import { Separator } from './ui/separator';
 
 type HeaderAction = {

@@ -1,31 +1,24 @@
+import { MembershipStatus, MembershipType } from '@/components/badge';
+import { Button } from '@/components/button';
 import CopyToClipboard from '@/components/copy-to-clipboard';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { toast } from '@/hooks/use-toast';
-import { cn, formatDate, getInitials } from '@/lib/utils';
+import { cn, getInitials } from '@/lib/utils';
 import { ClubMember } from '@/types';
-import { Link } from '@inertiajs/react';
-import { IconUsersGroup } from '@tabler/icons-react';
 import { ColumnDef } from '@tanstack/react-table';
 import { DataTableRowActions } from './data-table-row-actions';
 
-const showCopiedMessage = (value: string) => {
-    toast({
-        title: 'Copied!',
-        description: (
-            <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-                <code className="text-white">{value}</code>
-            </pre>
-        ),
-    });
-};
-
-export const columns: ColumnDef<ClubMember>[] = [
+export const columns = (
+    view: (member: ClubMember) => void,
+): ColumnDef<ClubMember>[] => [
     {
         accessorKey: 'fullName',
         header: () => <div>Name</div>,
         cell: ({ row }) => (
-            <div className="flex flex-row items-center text-nowrap">
+            <Button
+                onClick={() => view(row.original)}
+                variant={'ghost'}
+                className="flex flex-row items-center text-nowrap"
+            >
                 <Avatar className="mr-6 size-8 rounded-lg">
                     <AvatarImage
                         src={row.original.images?.thumb ?? undefined}
@@ -35,15 +28,8 @@ export const columns: ColumnDef<ClubMember>[] = [
                         {getInitials(row.original.name)}
                     </AvatarFallback>
                 </Avatar>
-                <Link
-                    href={route('members.form', {
-                        memberId: `${row.original.id}`,
-                    })}
-                    className="group inline-flex items-center space-x-1 hover:text-blue-400 hover:underline disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                    {row.original.name}
-                </Link>
-            </div>
+                {row.original.name}
+            </Button>
         ),
         meta: {
             className: cn(
@@ -61,7 +47,7 @@ export const columns: ColumnDef<ClubMember>[] = [
         cell: ({ row }) => (
             <div className="w-fit text-nowrap">
                 <CopyToClipboard
-                    onCopySuccess={() => showCopiedMessage(row.original.email)}
+                    showCopiedMessage
                     textToCopy={row.original.email}
                 />
             </div>
@@ -75,7 +61,7 @@ export const columns: ColumnDef<ClubMember>[] = [
         cell: ({ row }) => (
             <div>
                 <CopyToClipboard
-                    onCopySuccess={() => showCopiedMessage(row.original.phone)}
+                    showCopiedMessage
                     textToCopy={row.original.phone}
                 />
             </div>
@@ -88,7 +74,7 @@ export const columns: ColumnDef<ClubMember>[] = [
         header: () => <div>Induction Date</div>,
         cell: ({ row }) =>
             row.original.induction_date
-                ? formatDate(row.original.induction_date)
+                ? row.original.induction_date.dateString
                 : '-',
     },
     {
@@ -96,17 +82,9 @@ export const columns: ColumnDef<ClubMember>[] = [
         header: () => <div>Membership Status</div>,
         cell: ({ row }) => {
             return (
-                <div className="flex space-x-2">
-                    <Badge
-                        variant="outline"
-                        className={cn(
-                            'capitalize',
-                            'border-teal-200 bg-teal-100/30 text-teal-900 dark:text-teal-200',
-                        )}
-                    >
-                        {row.original.status?.label ?? ''}
-                    </Badge>
-                </div>
+                <MembershipStatus
+                    status={row.original.status?.label ?? 'Inactive'}
+                />
             );
         },
         enableSorting: false,
@@ -116,17 +94,7 @@ export const columns: ColumnDef<ClubMember>[] = [
         accessorKey: 'membership_type',
         header: () => <div>Membership Type</div>,
         cell: ({ row }) => {
-            return (
-                <div className="flex items-center gap-x-2">
-                    <IconUsersGroup
-                        size={16}
-                        className="text-muted-foreground"
-                    />
-                    <span className="text-sm capitalize">
-                        {row.original.membership_type.label}
-                    </span>
-                </div>
-            );
+            return <MembershipType type={row.original.membership_type.label} />;
         },
         enableSorting: false,
         enableHiding: false,

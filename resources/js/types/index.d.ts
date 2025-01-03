@@ -15,19 +15,44 @@ type SelectField<T extends string = string> = {
     label: T;
 };
 
-type MembershipType =
-    | 'Club Member'
-    | 'Honorary Member'
-    | 'Prospective Member'
-    | 'Alumni';
+const MembershipType = [
+    'Club Member',
+    'Honorary Member',
+    'Prospective Member',
+    'Alumni',
+] as const;
 
-type MembershipStatus =
-    | 'Active'
-    | 'Resigned'
-    | 'Inactive'
-    | 'Leave of Absence'
-    | 'Termindated'
-    | 'Resigned';
+type MembershipType = (typeof MembershipType)[number];
+
+const MembershipStatus = [
+    'Active',
+    'Resigned',
+    'Inactive',
+    'Leave of Absence',
+    'Terminated',
+    'LOA',
+] as const;
+
+type MembershipStatus = (typeof MembershipStatus)[number];
+
+type DateType = {
+    timestamp: number;
+    timezone: string;
+    dateString: string;
+    shortString: string;
+    date: Date;
+};
+
+type Address = {
+    street: string;
+    cityOrTown: string;
+    parish?: string;
+    stateOrProvince?: string;
+    postalCode?: string;
+    country: string;
+    additionalInfo?: string;
+    displayString: string;
+};
 
 export type ClubMember = {
     images?: {
@@ -47,10 +72,18 @@ export type ClubMember = {
     membership_type: SelectField<MembershipType>;
     status?: SelectField<MembershipStatus>;
     is_in_good_standing: boolean;
-    address?: string;
-    date_of_birth?: string;
-    induction_date?: string;
-    age?: number;
+    address?: Address;
+    date_of_birth?: DateType;
+    induction_date?: DateType;
+    age: {
+        current?: number;
+        nextJuly?: number;
+    };
+    profession?: string;
+    occupation: string;
+    current_club_position?: string;
+    current_district_position?: string;
+    years_active: number;
 };
 
 type ConfigProps<T> = T & object;
@@ -74,18 +107,18 @@ export type PageProps<
     };
 };
 
+type ErrorMessage = {
+    message: string;
+    has_error: false;
+};
+type SuccessMessage = {
+    error: string;
+    has_error: true;
+};
 export type ResponseWithMessage<
     T extends Record<string, unknown> = Record<string, unknown>,
 > = PageProps<T, unknown> & {
-    flash:
-        | {
-              message: string;
-              has_error: false;
-          }
-        | {
-              error: string;
-              has_error: true;
-          };
+    flash: ErrorMessage | SuccessMessage;
 };
 
 export type PaginationLink = {

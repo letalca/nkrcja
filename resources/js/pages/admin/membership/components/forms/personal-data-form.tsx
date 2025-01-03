@@ -1,7 +1,7 @@
+import { Button } from '@/components/button';
 import { DateFormField } from '@/components/form-fields/date-form-field';
 import { SelectFormField } from '@/components/form-fields/select-form-field';
 import { TextFormField } from '@/components/form-fields/text-form-field';
-import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { toast } from '@/hooks/use-toast';
 import { handleApiError } from '@/lib/handle-api-error';
@@ -29,10 +29,10 @@ export default function PersonalDataForm() {
             membership_type: clubMember.membership_type.value.toString() ?? '',
             status: clubMember.status?.value.toString() ?? '',
             date_of_birth: clubMember.date_of_birth
-                ? new Date(clubMember.date_of_birth)
+                ? new Date(clubMember.date_of_birth.date)
                 : undefined,
             induction_date: clubMember.induction_date
-                ? new Date(clubMember.induction_date)
+                ? new Date(clubMember.induction_date.date)
                 : undefined,
             is_in_good_standing: clubMember.is_in_good_standing,
         };

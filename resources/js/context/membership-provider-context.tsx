@@ -34,6 +34,9 @@ export interface MembershipProviderContextProps {
     clearFilters: () => void;
     setSelectedFilters: (key: string, filters: string[]) => void;
     getSelectedFilters: (key: string) => string[];
+    dialog?: DialogData | null;
+    closeDialog: () => void;
+    showDeleteConfirmation: (m: ClubMember) => void;
 }
 
 type FilterState = Record<string, string[]>;
@@ -49,16 +52,34 @@ interface MembershipProviderProps extends PropsWithChildren {
     clubMembers: ClubMember[];
     filters: Filter[];
     paginate: PaginatedProps;
-    columns: ColumnDef<ClubMember>[];
+    columns: (view: (member: ClubMember) => void) => ColumnDef<ClubMember>[];
 }
+
+type DialogData = {
+    dialog: 'delete' | 'profile';
+    data: ClubMember;
+};
 
 export const MembershipProvider: FC<MembershipProviderProps> = (props) => {
     const { children, filters, paginate, clubMembers, columns } = props;
+    const [dialog, setDialog] = useState<DialogData | null>(null);
+
     const { query, addQueries, addQuery, has, removeQueries, getQuery } =
         useRouterQuery();
     const [selectedFilterList, setSelectedFilterList] = useState<FilterState>(
         {},
     );
+
+    const showDeleteConfirmation = useCallback((member: ClubMember) => {
+        setDialog({ data: member, dialog: 'delete' });
+    }, []);
+
+    const showProfileDialog = useCallback((member: ClubMember) => {
+        setDialog({ data: member, dialog: 'profile' });
+    }, []);
+    const closeDialog = useCallback(() => {
+        setDialog(null);
+    }, [setDialog]);
 
     useEffect(() => {
         const initialFilters = filters.reduce<FilterState>((acc, filter) => {
@@ -71,9 +92,14 @@ export const MembershipProvider: FC<MembershipProviderProps> = (props) => {
         setSelectedFilterList(initialFilters);
     }, [filters, getQuery]);
 
+    const _columns: ColumnDef<ClubMember>[] = useMemo(
+        () => columns(showProfileDialog),
+        [columns, showProfileDialog],
+    );
+
     const table = useReactTable({
         data: clubMembers,
-        columns,
+        columns: _columns,
         enableRowSelection: false,
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
@@ -137,7 +163,7 @@ export const MembershipProvider: FC<MembershipProviderProps> = (props) => {
     const contextValue = useMemo(
         () => ({
             getSelectedFilters,
-            columns,
+            columns: _columns,
             paginated: paginate,
             filters,
             data: clubMembers,
@@ -148,10 +174,13 @@ export const MembershipProvider: FC<MembershipProviderProps> = (props) => {
             isTableFiltered,
             setSelectedFilters,
             clearFilters,
+            showDeleteConfirmation,
+            dialog,
+            closeDialog,
         }),
         [
             getSelectedFilters,
-            columns,
+            _columns,
             paginate,
             filters,
             clubMembers,
@@ -161,6 +190,9 @@ export const MembershipProvider: FC<MembershipProviderProps> = (props) => {
             isTableFiltered,
             setSelectedFilters,
             clearFilters,
+            showDeleteConfirmation,
+            dialog,
+            closeDialog,
         ],
     );
 

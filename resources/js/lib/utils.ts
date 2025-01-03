@@ -30,7 +30,7 @@ export function handleServerError(error: unknown) {
 }
 
 export const getInitials = (name: string): string => {
-    if (!name) return '';
+    if (!name) return 'NK';
 
     const nameParts = name.trim().split(' ');
 

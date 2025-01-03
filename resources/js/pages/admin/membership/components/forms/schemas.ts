@@ -38,3 +38,29 @@ export const personalFormSchema = z.object({
     induction_date: z.date().optional(),
     is_in_good_standing: z.boolean().default(true),
 });
+
+const phoneRegex = /^\+[1-9]\d{1,14}$/;
+
+export const contactFormSchema = z.object({
+    primary_phone: z
+        .string()
+        .regex(
+            phoneRegex,
+            'Phone number must be in international format (e.g., +1234567890)',
+        )
+        .min(1, 'Phone number is required'),
+    primary_phone_whatsapp: z.boolean().default(false),
+    secondary_phone: z
+        .string()
+        .regex(
+            phoneRegex,
+            'Phone number must be in international format (e.g., +1234567890)',
+        )
+        .optional(),
+    secondary_phone_whatsapp: z.boolean().default(false),
+    primary_email: z
+        .string()
+        .email('Invalid email address')
+        .min(1, 'Email is required'),
+    secondary_email: z.string().email('Invalid email address').optional(),
+});

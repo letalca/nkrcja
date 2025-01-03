@@ -1,5 +1,4 @@
 import { Button } from '@/components/button';
-import { Calendar } from '@/components/ui/calendar';
 import {
     FormField as BaseFormField,
     FormControl,
@@ -16,13 +15,17 @@ import { cn, formatDate } from '@/lib/utils';
 import { IconCalendar } from '@tabler/icons-react';
 import { ReactElement } from 'react';
 import { FieldPath, FieldValues } from 'react-hook-form';
+import DatePicker from '../date-picker';
 import { FormFieldProps, RenderFieldFunc } from './types';
 
 export const DateFormField = <
     TFieldValues extends FieldValues = FieldValues,
     TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(
-    props: FormFieldProps<TFieldValues, TName>,
+    props: FormFieldProps<TFieldValues, TName> & {
+        minYear?: number;
+        maxYear?: number;
+    },
 ) => {
     const {
         render,
@@ -31,6 +34,8 @@ export const DateFormField = <
         label,
         placeholder = '',
         control,
+        maxYear,
+        minYear = 2000,
         ...otherProps
     } = props;
 
@@ -59,14 +64,12 @@ export const DateFormField = <
                     </FormControl>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        disabled={(date) =>
-                            date > new Date() || date < new Date('1900-01-01')
-                        }
-                        initialFocus
+                    <DatePicker
+                        initialDate={field.value}
+                        onDateChange={field.onChange}
+                        minYear={minYear}
+                        maxYear={maxYear}
+                        className="max-w-sm"
                     />
                 </PopoverContent>
             </Popover>

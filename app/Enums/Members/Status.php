@@ -38,7 +38,7 @@ enum Status: int
         return match ($this) {
             self::Active => 'Active',
             self::Inactive => 'Inactive',
-            self::LeaveOfAbsence => 'LOA',
+            self::LeaveOfAbsence => 'Leave of Absence',
             self::Terminated => 'Terminated',
             self::Resigned => 'Resigned',
         };

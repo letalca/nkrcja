@@ -21,7 +21,7 @@ class SavePersonalDataAction
 
     public function execute(): void
     {
-        $member = Member::with('media')->findOrFail($this->memberId);
+        $member = Member::withRelationships()->findOrFail($this->memberId);
         $validated = $this->validateRequest();
 
         foreach ($this->nullableFields as $field) {

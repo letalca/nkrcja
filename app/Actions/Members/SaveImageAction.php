@@ -11,7 +11,7 @@ class SaveImageAction
     public function __construct(private readonly int $memberId) {}
     public function execute(): void
     {
-        $member = Member::with('media')->findOrFail($this->memberId);
+        $member = Member::withRelationships()->findOrFail($this->memberId);
         $max_file_size = config()->integer('media-library.max_file_size') / 1024;
         request()->validate([
             'image' => [
