@@ -54,6 +54,13 @@ type Address = {
     displayString: string;
 };
 
+type Phone = {
+    number: string;
+    primary: boolean;
+    whatsapp: string;
+    type: string;
+};
+
 export type ClubMember = {
     images?: {
         medium?: string | null;
@@ -84,6 +91,7 @@ export type ClubMember = {
     current_club_position?: string;
     current_district_position?: string;
     years_active: number;
+    phones?: Phone[];
 };
 
 type ConfigProps<T> = T & object;

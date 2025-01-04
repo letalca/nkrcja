@@ -6,9 +6,11 @@ namespace App\Http\Controllers;
 
 use App\Enums\Gender;
 use App\Enums\Members;
-use App\Enums\Members\FormType;
+use App\Exceptions\Memebers\SaveMembershipDataException;
 use App\Http\Requests\Membership\ListMembersRequest;
+use App\Http\Requests\Membership\SaveMembershipDataRequest;
 use App\Models\Member;
+use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
@@ -32,7 +34,6 @@ class MembershipController extends Controller
                 'filter_key' => 'membership_type',
             ],
         ];
-        logger()->debug("Done with request");
         return Inertia::render('admin/membership/list', ['paginate' => $request->paginate(), 'filters' => $filters]);
     }
 
@@ -49,13 +50,19 @@ class MembershipController extends Controller
         return Inertia::render('admin/membership/member-view-page', ['data' => $member->transform()]);
     }
 
-    public function save(int $memberId, FormType $form): RedirectResponse
+    public function save(SaveMembershipDataRequest $saveMembershipDataRequest): RedirectResponse
     {
         try {
-            $form->save($memberId);
+            $saveMembershipDataRequest->save();
+            return back()->with(['message' => $saveMembershipDataRequest->getMessage()]);
         } catch (ModelNotFoundException) {
-            back()->with(['error' => "Member not found with id: {$memberId}"]);
+            return back()->with(['error' => "Member not found"]);
+        } catch (SaveMembershipDataException $e) {
+            logger()->error('Membership save failed:', ['error' => $e->getMessage()]);
+            return back()->with(['error' => $e->getMessage()]);
+        } catch (Exception $e) {
+            logger()->error('Membership save failed:', ['error' => $e->getMessage()]);
+            return back()->with(['error' => "Failed to save membership data"]);
         }
-        return back()->with(['message' => $form->message()]);
     }
 }

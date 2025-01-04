@@ -3,17 +3,12 @@ import { DateFormField } from '@/components/form-fields/date-form-field';
 import { SelectFormField } from '@/components/form-fields/select-form-field';
 import { TextFormField } from '@/components/form-fields/text-form-field';
 import { Form } from '@/components/ui/form';
-import { toast } from '@/hooks/use-toast';
-import { handleApiError } from '@/lib/handle-api-error';
-import { ClubMember, ResponseWithMessage } from '@/types';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { router } from '@inertiajs/react';
+import { handleFormErrors } from '@/lib/handle-form-errors';
+import { ClubMember } from '@/types';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { useFormContext } from '../../context/form/use-form-context';
-import { personalFormSchema } from './schemas';
-
-type PersonalFormValues = z.infer<typeof personalFormSchema>;
+import { api } from './api';
+import { type PersonalDataForm, personalDataResolver } from './schemas';
 
 export default function PersonalDataForm() {
     const { member, statuses, types, genders, updateMember, setIsFormDirty } =
@@ -21,6 +16,7 @@ export default function PersonalDataForm() {
 
     const getDefaultValues = (clubMember: ClubMember) => {
         return {
+            email: clubMember.email ?? '',
             first_name: clubMember.first_name ?? '',
             last_name: clubMember.last_name ?? '',
             middle_name: clubMember.middle_name ?? '',
@@ -38,54 +34,31 @@ export default function PersonalDataForm() {
         };
     };
 
-    const defaultValues: Partial<PersonalFormValues> = getDefaultValues(member);
+    const defaultValues = getDefaultValues(member);
 
-    const form = useForm<PersonalFormValues>({
-        resolver: zodResolver(personalFormSchema),
+    const form = useForm<PersonalDataForm>({
+        resolver: personalDataResolver,
         defaultValues,
     });
 
-    async function onSubmit(data: PersonalFormValues) {
-        await new Promise<void>((res) => {
-            router.post(
-                route('members.save', {
-                    memberId: member.id,
-                    form: 'personal',
+    async function onSubmit(data: PersonalDataForm) {
+        const clubMember = await api({
+            data,
+            form: 'personal',
+            memberId: member.id,
+            handleFormErrors: (errors: Record<string, string>) =>
+                handleFormErrors(errors, defaultValues, (key, message) => {
+                    form.setError(key, { message: message });
                 }),
-                data,
-                {
-                    onError: (e) =>
-                        handleApiError(e, 'update personal information'),
-                    onSuccess: (response) => {
-                        const props =
-                            response.props as unknown as ResponseWithMessage<{
-                                data: ClubMember;
-                            }>;
-
-                        const flash = props.flash;
-                        toast({
-                            variant: flash.has_error
-                                ? 'destructive'
-                                : 'success',
-                            description: flash.has_error
-                                ? flash.error
-                                : flash.message,
-                        });
-                        if (!flash.has_error) {
-                            updateMember(props.data);
-                            form.reset(getDefaultValues(props.data));
-                        }
-                    },
-                    onFinish: () => {
-                        setIsFormDirty(false);
-                        res();
-                    },
-                },
-            );
         });
+        if (clubMember) {
+            updateMember(clubMember);
+            form.reset(getDefaultValues(clubMember));
+            setIsFormDirty(false);
+        }
     }
 
-    const isFormValid = form.formState.isValid;
+    // const isFormValid = form.formState.isValid;
 
     return (
         <Form {...form}>
@@ -108,6 +81,13 @@ export default function PersonalDataForm() {
                         name="middle_name"
                         placeholder="Middle Name (optional)"
                         label="Middle Name"
+                    />
+                    <TextFormField
+                        control={form.control}
+                        name="email"
+                        placeholder="serviceninja@nkrcja.com"
+                        label="Email Address"
+                        disabled={Boolean(member.email)}
                     />
                     <TextFormField
                         control={form.control}
@@ -146,6 +126,11 @@ export default function PersonalDataForm() {
                         name="date_of_birth"
                         label="Date of Birth"
                         disabled={Boolean(member.date_of_birth)}
+                        maxYear={new Date().getFullYear() - 10}
+                        minYear={1980}
+                        disabledDate={(d) =>
+                            d.getFullYear() > new Date().getFullYear() - 10
+                        }
                     />
                     <DateFormField
                         control={form.control}
@@ -153,6 +138,7 @@ export default function PersonalDataForm() {
                         name="induction_date"
                         label="Induction Date"
                         disabled={Boolean(member.induction_date)}
+                        disabledDate={(d) => d > new Date()}
                     />
 
                     <SelectFormField
@@ -178,7 +164,8 @@ export default function PersonalDataForm() {
                     </Button>
                     <Button
                         type="submit"
-                        disabled={!form.formState.isDirty || !isFormValid}
+                        // disabled={!form.formState.isDirty || !isFormValid}
+                        disabled={!form.formState.isDirty}
                     >
                         Save Changes
                     </Button>

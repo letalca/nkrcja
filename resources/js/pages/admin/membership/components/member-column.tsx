@@ -58,14 +58,15 @@ export const columns = (
     {
         accessorKey: 'phone',
         header: () => <div>Phone Number</div>,
-        cell: ({ row }) => (
-            <div>
-                <CopyToClipboard
-                    showCopiedMessage
-                    textToCopy={row.original.phone}
-                />
-            </div>
-        ),
+        cell: ({ row }) =>
+            row.original.phone ? (
+                <div>
+                    <CopyToClipboard
+                        showCopiedMessage
+                        textToCopy={row.original.phone}
+                    />
+                </div>
+            ) : null,
         enableHiding: false,
         enableSorting: false,
     },

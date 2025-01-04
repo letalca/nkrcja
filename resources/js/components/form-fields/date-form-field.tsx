@@ -16,6 +16,7 @@ import { IconCalendar } from '@tabler/icons-react';
 import { ReactElement } from 'react';
 import { FieldPath, FieldValues } from 'react-hook-form';
 import DatePicker from '../date-picker';
+import { CalendarProps } from '../ui/calendar';
 import { FormFieldProps, RenderFieldFunc } from './types';
 
 export const DateFormField = <
@@ -25,6 +26,7 @@ export const DateFormField = <
     props: FormFieldProps<TFieldValues, TName> & {
         minYear?: number;
         maxYear?: number;
+        disabledDate?: CalendarProps['disabled'];
     },
 ) => {
     const {
@@ -35,6 +37,7 @@ export const DateFormField = <
         placeholder = '',
         control,
         maxYear,
+        disabledDate,
         minYear = 2000,
         ...otherProps
     } = props;
@@ -42,7 +45,7 @@ export const DateFormField = <
     const renderDatePicker = ({
         field,
     }: RenderFieldFunc<TFieldValues, TName>): ReactElement => (
-        <FormItem className="flex flex-col">
+        <FormItem>
             {label ? <FormLabel>{label}</FormLabel> : null}
             <Popover>
                 <PopoverTrigger asChild disabled={disabled}>
@@ -70,6 +73,7 @@ export const DateFormField = <
                         minYear={minYear}
                         maxYear={maxYear}
                         className="max-w-sm"
+                        disabled={disabledDate}
                     />
                 </PopoverContent>
             </Popover>

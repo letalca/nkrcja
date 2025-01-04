@@ -4,30 +4,51 @@ declare(strict_types=1);
 
 namespace App\Actions\Members;
 
+use App\Actions\Contracts\SaveMemberDetailsAction;
+use App\Exceptions\Memebers\SaveMembershipDataException;
 use App\Models\Member;
+use Exception;
+use Illuminate\Support\Facades\DB;
 
-class SaveImageAction
+class SaveImageAction extends SaveMemberDetailsAction
 {
-    public function __construct(private readonly int $memberId) {}
-    public function execute(): void
+    private const ALLOWED_MIMES = ['jpeg', 'png', 'jpg'];
+
+    public static function rules(): array
     {
-        $member = Member::withRelationships()->findOrFail($this->memberId);
-        $max_file_size = config()->integer('media-library.max_file_size') / 1024;
-        request()->validate([
+        $maxFileSize  = config()->integer('media-library.max_file_size') / 1024;
+        return [
             'image' => [
                 'required',
                 'image',
-                'mimes:jpeg,png,jpg',
-                "max:{$max_file_size}",
+                'mimes:' . implode(',', self::ALLOWED_MIMES),
+                "max:{$maxFileSize}",
             ],
-        ]);
+        ];
+    }
 
-        if ($member->hasMedia(Member::$mediaKey)) {
-            $member->clearMediaCollection(Member::$mediaKey);
+    public function execute(array $validated): void
+    {
+        try {
+            DB::transaction(function (): void {
+                if ($this->member->hasMedia(Member::$mediaKey)) {
+                    $this->member->clearMediaCollection(Member::$mediaKey);
+                }
+
+                $this->member
+                    ->addMediaFromRequest('image')
+                    ->toMediaCollection(Member::$mediaKey);
+            });
+        } catch (Exception $e) {
+            logger()->error('Failed to save member image', [
+                'member_id' => $this->member->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            throw new SaveMembershipDataException(
+                'Failed to upload image',
+                previous: $e,
+            );
         }
-
-        $member
-            ->addMediaFromRequest('image')
-            ->toMediaCollection(Member::$mediaKey);
     }
 }

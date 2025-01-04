@@ -1,4 +1,4 @@
-import { Calendar } from '@/components/ui/calendar';
+import { Calendar, CalendarProps } from '@/components/ui/calendar';
 import {
     Select,
     SelectContent,
@@ -14,6 +14,7 @@ interface DatePickerProps {
     minYear?: number;
     maxYear?: number;
     className?: string;
+    disabled?: CalendarProps['disabled'];
 }
 
 const DatePicker: React.FC<DatePickerProps> = ({
@@ -22,8 +23,15 @@ const DatePicker: React.FC<DatePickerProps> = ({
     minYear = 1980,
     maxYear = new Date().getFullYear(),
     className = '',
+    disabled,
 }) => {
-    const [date, setDate] = React.useState<Date>(initialDate);
+    const [date, setDate] = React.useState<Date>(
+        new Date(
+            Math.min(initialDate.getFullYear(), maxYear),
+            initialDate.getMonth(),
+            initialDate.getDay(),
+        ),
+    );
     const years: number[] = Array.from(
         { length: maxYear - minYear + 1 },
         (_, i) => minYear + i,
@@ -110,7 +118,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
                 onSelect={handleDateSelect}
                 initialFocus
                 defaultMonth={date}
-                month={date}
+                disabled={disabled}
             />
         </div>
     );

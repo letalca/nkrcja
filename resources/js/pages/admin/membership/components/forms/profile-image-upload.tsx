@@ -2,16 +2,15 @@ import { Button } from '@/components/button';
 import ImageCropDialog from '@/components/image-crop-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useCropImage } from '@/hooks/use-crop-image';
-import { toast } from '@/hooks/use-toast';
-import { handleApiError } from '@/lib/handle-api-error';
 import { getInitials } from '@/lib/utils';
-import { ClubMember, PageProps, ResponseWithMessage } from '@/types';
+import { ClubMember, PageProps } from '@/types';
 import { useForm, usePage } from '@inertiajs/react';
 import { IconUpload, IconX } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 import { useRef } from 'react';
 import 'react-image-crop/dist/ReactCrop.css';
 import { useFormContext } from '../../context/form/use-form-context';
+import { api } from './api';
 
 // TODO: implement dropzone
 //https://github.com/shadcn-ui/ui/discussions/3188
@@ -50,31 +49,16 @@ export default function ProfileImageUpload() {
     const handleUpload = async (event: React.FormEvent) => {
         event.preventDefault();
         if (!preview) return;
-
-        post(route('members.save', { memberId: member.id, form: 'image' }), {
-            onSuccess: (response) => {
-                const props = response.props as unknown as ResponseWithMessage<{
-                    data: ClubMember;
-                }>;
-                const flash = props.flash;
-                if (flash.has_error) {
-                    toast({
-                        description: flash.error,
-                        variant: 'destructive',
-                    });
-                } else {
-                    toast({
-                        description: flash.message,
-                        variant: 'success',
-                    });
-                }
-                updateMember(props.data);
-            },
-            onError: (e) => handleApiError(e, 'upload image'),
-            onFinish: () => {
-                setIsFormDirty(false);
-            },
+        const clubMember = await api({
+            form: 'image',
+            memberId: member.id,
+            post,
         });
+        if (clubMember) {
+            setIsFormDirty(false);
+            updateMember(clubMember);
+            // TODO: reset form
+        }
     };
 
     const handleAvatarTrigger = () => {

@@ -19,12 +19,11 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * Member class
  * @property string $rotary_id
  * @property string $email
- * @property string $primary_phone_number
- * @property string $secondary_phone_number
  * @property string $first_name
  * @property string $last_name
  * @property string $middle_name
  * @property array $age
+ * @property array $phones
  * @property Enums\Gender $gender
  * @property Enums\Members\Type $membership_type
  * @property Enums\Members\Status $status
@@ -82,6 +81,14 @@ final class Member extends Model implements HasMedia
         );
     }
 
+    public function phone(): Attribute
+    {
+        return Attribute::make(
+            get: fn (): ?string => collect($this->phones)
+                ->firstWhere('primary', true)['number'] ?? null,
+        );
+    }
+
     public function transform()
     {
         return [
@@ -89,7 +96,7 @@ final class Member extends Model implements HasMedia
             'rotary_id' => $this->rotary_id,
             'name' => $this->name,
             'email' => $this->email,
-            'phone' => $this->primary_phone_number,
+            'phone' => $this->phone,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
             'middle_name' => $this->middle_name,
@@ -104,6 +111,7 @@ final class Member extends Model implements HasMedia
             'images' => $this->getAllMediaUrls(),
             'current_club_position' => 50 === $this->id ? 'Membership Chair' : null,
             'years_active' => formatDateDifference($this->induction_date),
+            'phones' => $this->phones,
         ];
     }
 
@@ -155,6 +163,7 @@ final class Member extends Model implements HasMedia
             'gender' => Enums\Gender::class,
             'membership_type' => Enums\Members\Type::class,
             'good_standing' => 'boolean',
+            'phones' => 'array',
         ];
     }
 }
