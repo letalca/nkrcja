@@ -6,9 +6,8 @@ import {
     CommandItem,
     CommandList,
 } from '@/components/ui/command';
-import { useSearch } from '@/context/search-context';
+import { useSearch } from '@/context/search';
 import { IconArrowRightDashed } from '@tabler/icons-react';
-
 import React from 'react';
 import { navGroups } from './data/nav-groups';
 import { ScrollArea } from './ui/scroll-area';

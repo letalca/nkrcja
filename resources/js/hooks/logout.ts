@@ -1,5 +1,5 @@
 import { router } from '@inertiajs/react';
-import { toast } from './use-toast';
+import { toast } from './useToast';
 
 export const logout = async () => {
     try {

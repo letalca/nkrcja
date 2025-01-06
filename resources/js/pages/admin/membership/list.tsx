@@ -1,6 +1,6 @@
 import { Main } from '@/components/main';
 import { PageHeader } from '@/components/page-header';
-import { MembershipProvider } from '@/context/membership-provider-context';
+import { MembershipProvider } from '@/context/membership';
 import Layout from '@/layouts/layout';
 import { ClubMember, Filter, PageProps, PaginatedResponse } from '@/types';
 import { IconMailPlus, IconUserPlus } from '@tabler/icons-react';

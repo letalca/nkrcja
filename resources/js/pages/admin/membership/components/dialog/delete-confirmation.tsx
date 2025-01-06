@@ -1,6 +1,6 @@
 import { ConfirmDialog } from '@/components/confirm-dialog';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { toast } from '@/hooks/use-toast';
+import { toast } from '@/hooks/useToast';
 import { ClubMember } from '@/types';
 import { IconAlertTriangle } from '@tabler/icons-react';
 

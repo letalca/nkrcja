@@ -1,6 +1,6 @@
 import NkrcCommunityLogo from '@/assets/nkrc-community-logo.png';
 import NkrcLogoWhite from '@/assets/nkrc-logo-white.png';
-import { useAutoFocusFieldOnKeyPress } from '@/hooks/use-autofocus-field-on-key-press';
+import { useFocusOnKeyPress } from '@/hooks/useFocusOnKeyPress';
 import BaseLayout from '@/layouts/base-layout';
 import { PageProps } from '@/types';
 import { motion } from 'framer-motion';
@@ -18,7 +18,7 @@ export default function Login({
     canSignInWithGoogle,
     club,
 }: LoginPageProps) {
-    useAutoFocusFieldOnKeyPress('input[type="email"]');
+    useFocusOnKeyPress('input[type="email"]');
 
     return (
         <BaseLayout>

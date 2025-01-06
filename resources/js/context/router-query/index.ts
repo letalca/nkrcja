@@ -1,15 +1,17 @@
+import { useContext } from 'react';
 import {
     RouterQueryContext,
-    RouterQueryContextProps,
-} from '@/context/router-query-context';
-import { useContext } from 'react';
+    RouterQueryProvider,
+} from './router-query-provider';
 
-export const useRouterQuery = (): RouterQueryContextProps => {
+const useRouterQuery = () => {
     const context = useContext(RouterQueryContext);
-    if (!context) {
+    if (context === undefined) {
         throw new Error(
             'useRouterQuery must be used within a RouterQueryProvider',
         );
     }
     return context;
 };
+
+export { RouterQueryProvider, useRouterQuery };

@@ -1,4 +1,4 @@
-import { toast } from '@/hooks/use-toast';
+import { toast } from '@/hooks/useToast';
 import { handleApiError } from '@/lib/handle-api-error';
 import { ClubMember, ResponseWithMessage } from '@/types';
 import { router, useForm } from '@inertiajs/react';

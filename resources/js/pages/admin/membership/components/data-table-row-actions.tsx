@@ -7,7 +7,7 @@ import {
     DropdownMenuShortcut,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useMembershipTable } from '@/hooks/use-membership-table';
+import { useMembershipProvider } from '@/context/membership';
 import { ClubMember } from '@/types';
 import { router } from '@inertiajs/react';
 import { IconDots, IconEdit, IconTrash } from '@tabler/icons-react';
@@ -18,7 +18,7 @@ interface DataTableRowActionsProps {
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-    const { showDeleteConfirmation } = useMembershipTable();
+    const { showDeleteConfirmation } = useMembershipProvider();
     return (
         <>
             <DropdownMenu modal={false}>

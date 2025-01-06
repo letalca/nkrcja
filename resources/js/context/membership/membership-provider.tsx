@@ -1,4 +1,4 @@
-import { useRouterQuery } from '@/hooks/use-router-query';
+import { useRouterQuery } from '@/context/router-query';
 import { ClubMember, Filter, PaginatedProps } from '@/types';
 import {
     ColumnDef,
@@ -21,7 +21,7 @@ import {
     useState,
 } from 'react';
 
-export interface MembershipProviderContextProps {
+interface MembershipProviderContextProps {
     paginated: PaginatedProps;
     filters: Filter[];
     data: ClubMember[];

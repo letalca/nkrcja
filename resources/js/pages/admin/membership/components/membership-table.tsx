@@ -6,7 +6,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { useMembershipTable } from '@/hooks/use-membership-table';
+import { useMembershipProvider } from '@/context/membership';
 import { flexRender } from '@tanstack/react-table';
 import { DataTablePagination } from './data-table-pagination';
 import { DataTableToolbar } from './data-table-toolbar';
@@ -15,7 +15,7 @@ import MemberDetailsDialog from './dialog/member-details';
 
 export function MembershipTable() {
     const { table, columns, dialog, closeDialog, showDeleteConfirmation } =
-        useMembershipTable();
+        useMembershipProvider();
 
     return (
         <>

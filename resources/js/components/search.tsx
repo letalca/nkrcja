@@ -1,4 +1,4 @@
-import { useSearch } from '@/context/search-context';
+import { useSearch } from '@/context/search';
 import { cn } from '@/lib/utils';
 import { IconSearch } from '@tabler/icons-react';
 import { Button } from './ui/button';
