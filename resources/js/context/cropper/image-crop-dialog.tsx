@@ -8,47 +8,39 @@ import {
 } from '@/components/ui/dialog';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { useRef } from 'react';
-import ReactCrop, { Crop, PercentCrop } from 'react-image-crop';
-
-export interface ImageCropDialogProps {
-    open?: boolean;
-    onOpenChange: (value: boolean) => void;
-    image?: string | null;
-    onCropComplete: (
-        croppedArea: PercentCrop,
-        currentImage: HTMLImageElement,
-    ) => void;
-    crop: Crop;
-    setCrop: (crop: PercentCrop) => void;
-    setTempImage: (img: string | null) => void;
-}
+import ReactCrop from 'react-image-crop';
+import { useCropper } from './useCropper';
 
 export interface ImageCropDialogRef {
     open: () => void;
     close: () => void;
 }
 
-export default function ImageCropDialog(props: ImageCropDialogProps) {
+export const ImageCropDialog = () => {
+    const imgRef = useRef<HTMLImageElement>(null);
+
     const {
-        open = false,
-        onOpenChange,
-        image = null,
-        onCropComplete,
+        cropDialogOpen,
+        cancel,
+        image,
         crop,
         setCrop,
-        setTempImage,
-    } = props;
-
-    const imgRef = useRef<HTMLImageElement>(null);
-    const handleCropComplete = (crop: PercentCrop) => {
+        onCropComplete,
+        aspectRatio,
+    } = useCropper();
+    const handleCropComplete = () => {
         if (imgRef.current) {
-            onCropComplete(crop, imgRef.current);
+            onCropComplete(imgRef.current);
         }
     };
-
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-xl">
+        <Dialog open={cropDialogOpen} onOpenChange={cancel}>
+            <DialogContent
+                className="max-w-xl"
+                onInteractOutside={(e) => {
+                    e.preventDefault();
+                }}
+            >
                 <VisuallyHidden asChild>
                     <DialogDescription />
                 </VisuallyHidden>
@@ -59,8 +51,8 @@ export default function ImageCropDialog(props: ImageCropDialogProps) {
                     <div className="space-y-4">
                         <ReactCrop
                             crop={crop}
-                            onChange={(pix, perc) => setCrop(perc)}
-                            aspect={1}
+                            onChange={(_, perc) => setCrop(perc)}
+                            aspect={aspectRatio}
                             circularCrop={false}
                         >
                             <img
@@ -74,26 +66,15 @@ export default function ImageCropDialog(props: ImageCropDialogProps) {
                             <Button
                                 type="button"
                                 variant="outline"
-                                onClick={() => {
-                                    onOpenChange(false);
-                                    setTempImage(null);
-                                }}
+                                onClick={cancel}
                             >
                                 Cancel
                             </Button>
-                            <Button
-                                onClick={() => {
-                                    if (imgRef.current) {
-                                        handleCropComplete(crop as PercentCrop);
-                                    }
-                                }}
-                            >
-                                Apply
-                            </Button>
+                            <Button onClick={handleCropComplete}>Apply</Button>
                         </div>
                     </div>
                 )}
             </DialogContent>
         </Dialog>
     );
-}
+};

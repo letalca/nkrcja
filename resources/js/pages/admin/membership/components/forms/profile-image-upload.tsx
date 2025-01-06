@@ -1,13 +1,12 @@
 import { Button } from '@/components/button';
-import ImageCropDialog from '@/components/image-crop-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useCropImage } from '@/hooks/use-crop-image';
+import { ImageCropper, type ImageCropperHandle } from '@/context/cropper';
 import { getInitials } from '@/lib/utils';
 import { ClubMember, PageProps } from '@/types';
 import { useForm, usePage } from '@inertiajs/react';
 import { IconUpload, IconX } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import 'react-image-crop/dist/ReactCrop.css';
 import { useFormContext } from '../../context/form/use-form-context';
 import { api } from './api';
@@ -19,54 +18,46 @@ type Props = PageProps<{ data: ClubMember }, { maxFileSize: number }>;
 
 export default function ProfileImageUpload() {
     const maxSize = usePage<Props>().props.config.maxFileSize;
-    const { setIsFormDirty, updateMember, member } = useFormContext();
-    const {
-        crop,
-        setCrop,
-        preview,
-        handleRemove,
-        handleImageChange,
-        acceptedTypes,
-        cropDialogOpen,
-        setCropDialogOpen,
-        handleCropComplete,
-        tempImage,
-        setTempImage,
-    } = useCropImage({ maxSize: maxSize, defaultImage: member.images?.medium });
+    const { updateMember, member, setIsFormDirty } = useFormContext();
 
     const { setData, progress, post, processing } = useForm<{
         image: File | undefined | null;
     }>({ image: null });
 
-    const setImage = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (handleImageChange(event)) {
-            const file = event.target.files?.[0];
-            setData('image', file);
-            setIsFormDirty(true);
-        }
-    };
-
     const handleUpload = async (event: React.FormEvent) => {
         event.preventDefault();
-        if (!preview) return;
+        if (!avatar) return;
         const clubMember = await api({
             form: 'image',
             memberId: member.id,
             post,
         });
         if (clubMember) {
-            setIsFormDirty(false);
             updateMember(clubMember);
-            // TODO: reset form
+            resetForm();
         }
     };
 
-    const handleAvatarTrigger = () => {
-        fileInputRef.current?.click();
-    };
-    const fileInputRef = useRef<HTMLInputElement>(null);
-
     const getOffset = (loaded: number) => 440 - (440 * loaded) / 100;
+
+    const [avatar, setAvatar] = useState<string | null>(null);
+    const cropperRef = useRef<ImageCropperHandle>(null);
+    const avatarPreview = avatar || member.images?.original || undefined;
+    const handleAvatarTrigger = () => {
+        cropperRef.current?.triggerFileInput();
+    };
+
+    const resetForm = () => {
+        cropperRef.current?.clear();
+        setAvatar(null);
+        setData({ image: null });
+        setIsFormDirty(false);
+    };
+
+    const handleSetFileData = (file: File) => {
+        setData({ image: file });
+        setIsFormDirty(true);
+    };
 
     return (
         <div className="space-y-6">
@@ -115,8 +106,9 @@ export default function ProfileImageUpload() {
                         <div className="absolute inset-4">
                             <Avatar className="size-72">
                                 <AvatarImage
-                                    src={preview || undefined}
+                                    src={avatarPreview}
                                     className="object-cover"
+                                    alt={member.name}
                                 />
                                 <AvatarFallback className="text-2xl">
                                     {getInitials(member.name)}
@@ -127,15 +119,12 @@ export default function ProfileImageUpload() {
                 </div>
 
                 <div className="flex space-x-3">
-                    <label htmlFor="image-upload">
-                        <input
-                            ref={fileInputRef}
-                            type="file"
-                            accept={acceptedTypes.join(',')}
-                            onChange={setImage}
-                            className="hidden"
-                            id="image-upload"
-                        />
+                    <ImageCropper
+                        className="hidden"
+                        ref={cropperRef}
+                        onCropCompleted={setAvatar}
+                        setFileData={handleSetFileData}
+                    >
                         <Button
                             type="button"
                             variant="outline"
@@ -146,13 +135,13 @@ export default function ProfileImageUpload() {
                                 <IconUpload className="h-4 w-4" />
                             </span>
                         </Button>
-                    </label>
-                    {preview && (
+                    </ImageCropper>
+                    {avatar && (
                         <Button
                             type="button"
                             variant="destructive"
                             className="cursor-pointer"
-                            onClick={handleRemove}
+                            onClick={resetForm}
                         >
                             <IconX className="h-4 w-4" />
                         </Button>
@@ -163,7 +152,7 @@ export default function ProfileImageUpload() {
                     Accepted formats: JPEG, PNG, WebP. Max size: {maxSize}MB
                 </p>
 
-                {preview && (
+                {avatar && (
                     <Button
                         onClick={handleUpload}
                         loading={processing}
@@ -173,17 +162,6 @@ export default function ProfileImageUpload() {
                     </Button>
                 )}
             </div>
-            {tempImage && (
-                <ImageCropDialog
-                    open={cropDialogOpen}
-                    crop={crop}
-                    setCrop={setCrop}
-                    image={tempImage}
-                    setTempImage={setTempImage}
-                    onOpenChange={(value: boolean) => setCropDialogOpen(value)}
-                    onCropComplete={handleCropComplete}
-                />
-            )}
         </div>
     );
 }
