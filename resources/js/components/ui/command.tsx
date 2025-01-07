@@ -7,8 +7,8 @@ import {
 import { cn } from '@/lib/utils';
 import { type DialogProps } from '@radix-ui/react-dialog';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+import { IconSearch } from '@tabler/icons-react';
 import { Command as CommandPrimitive } from 'cmdk';
-import { Search } from 'lucide-react';
 import * as React from 'react';
 
 const Command = React.forwardRef<
@@ -50,7 +50,7 @@ const CommandInput = React.forwardRef<
 >(({ className, ...props }, ref) => (
     // eslint-disable-next-line react/no-unknown-property
     <div className="flex items-center border-b px-3" cmdk-input-wrapper="">
-        <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+        <IconSearch className="mr-2 h-4 w-4 shrink-0 opacity-50" />
         <CommandPrimitive.Input
             ref={ref}
             className={cn(

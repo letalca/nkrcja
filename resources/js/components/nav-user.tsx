@@ -17,8 +17,7 @@ import {
 import { logout } from '@/hooks/logout';
 import { getInitials } from '@/lib/utils';
 import { User } from '@/types';
-import { IconUser } from '@tabler/icons-react';
-import { ChevronsUpDown, LogOut } from 'lucide-react';
+import { IconChevronsUp, IconLogout, IconUser } from '@tabler/icons-react';
 
 export function NavUser({ user }: { user: User }) {
     const { isMobile } = useSidebar();
@@ -45,7 +44,7 @@ export function NavUser({ user }: { user: User }) {
                                     {user.email}
                                 </span>
                             </div>
-                            <ChevronsUpDown className="ml-auto size-4" />
+                            <IconChevronsUp className="ml-auto size-4" />
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent
@@ -80,7 +79,7 @@ export function NavUser({ user }: { user: User }) {
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={logout}>
-                            <LogOut />
+                            <IconLogout />
                             Log out
                         </DropdownMenuItem>
                     </DropdownMenuContent>

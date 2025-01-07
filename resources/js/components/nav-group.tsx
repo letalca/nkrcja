@@ -14,10 +14,9 @@ import {
     SidebarMenuSubItem,
     useSidebar,
 } from '@/components/ui/sidebar';
-import { ChevronRight } from 'lucide-react';
-import { ReactNode } from 'react';
-
 import { Link } from '@inertiajs/react';
+import { IconChevronRight } from '@tabler/icons-react';
+import { ReactNode } from 'react';
 import { type NavGroup, NavItem } from './types';
 import { Badge } from './ui/badge';
 
@@ -65,7 +64,7 @@ function NavGroup({ title, items }: NavGroup) {
                                         {item.badge && (
                                             <NavBadge>{item.badge}</NavBadge>
                                         )}
-                                        <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                                        <IconChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                                     </SidebarMenuButton>
                                 </CollapsibleTrigger>
                                 <CollapsibleContent className="CollapsibleContent">

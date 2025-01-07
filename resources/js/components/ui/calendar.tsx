@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import * as React from 'react';
 import { DayPicker } from 'react-day-picker';
 import { buttonVariants } from './button';
@@ -58,13 +58,13 @@ function Calendar({
             }}
             components={{
                 IconLeft: ({ className, ...props }) => (
-                    <ChevronLeft
+                    <IconChevronLeft
                         className={cn('h-4 w-4', className)}
                         {...props}
                     />
                 ),
                 IconRight: ({ className, ...props }) => (
-                    <ChevronRight
+                    <IconChevronRight
                         className={cn('h-4 w-4', className)}
                         {...props}
                     />
