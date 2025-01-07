@@ -13,17 +13,25 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { handleFormErrors } from '@/lib/handle-form-errors';
 import { ClubMember } from '@/types';
-import { AnimatePresence, motion } from 'framer-motion';
-import { Plus, Trash2 } from 'lucide-react';
+import { IconPlus, IconTrash } from '@tabler/icons-react';
+import {
+    AnimatePresence,
+    type AnimationDefinition,
+    motion,
+} from 'framer-motion';
+import { useCallback, useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { useFormContext } from '../../context/form/use-form-context';
+import { FormAction } from './actions';
 import { api } from './api';
 import { CellType, cellTypes, phoneResolver, Phones } from './schemas';
 
 export default ContactInfoForm;
 
 function ContactInfoForm() {
+    const [showForm, setShowingForm] = useState(true);
     const { member, setIsFormDirty, updateMember } = useFormContext();
+    console.log(member.phones);
 
     const getFormDefaults = (member: ClubMember): Phones => {
         if (!member.phones || member.phones.length === 0) {
@@ -72,12 +80,57 @@ function ContactInfoForm() {
                 }),
         });
         if (clubMember) {
-            setIsFormDirty(false);
-            form.reset(getFormDefaults(clubMember));
-            updateMember(clubMember);
+            resetForm(clubMember);
         }
     };
+    const [resetting, setResetting] = useState(false);
 
+    useEffect(() => {
+        if (!showForm) {
+            form.reset(getFormDefaults(member));
+            setShowingForm(true);
+            setIsFormDirty(false);
+        }
+    }, [showForm, member, form, setIsFormDirty]);
+
+    const resetForm = (clubMember?: ClubMember) => {
+        if (clubMember) {
+            console.log(clubMember.phones);
+            updateMember(clubMember);
+        }
+        setShowingForm(false);
+    };
+
+    useEffect(() => {
+        if (resetting) {
+            setIsFormDirty(false);
+            setResetting(false);
+        }
+    }, [resetting, setIsFormDirty]);
+
+    useEffect(() => {
+        if (form.formState.isDirty) {
+            setIsFormDirty(true);
+        } else {
+            setIsFormDirty(false);
+        }
+    }, [form.formState.isDirty, setIsFormDirty]);
+
+    const handleAnimationComplete = useCallback(
+        (definition: AnimationDefinition, index: number) => {
+            const isLastField: boolean =
+                index === phoneFields.fields.length - 1;
+            const isExitAnimation =
+                typeof definition === 'object' &&
+                definition !== null &&
+                'id' in definition &&
+                definition.id === 'exit-animation';
+            if (isLastField && isExitAnimation) {
+                phoneFields.remove(index);
+            }
+        },
+        [phoneFields],
+    );
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -89,155 +142,144 @@ function ContactInfoForm() {
                             variant="outline"
                             size="sm"
                             disabled={phoneFields.fields.length === 4}
-                            onClick={() =>
+                            onClick={() => {
                                 phoneFields.append({
                                     number: '',
                                     primary: false,
                                     whatsapp: false,
                                     type: 'home',
-                                })
-                            }
+                                });
+                            }}
                             className="flex items-center gap-2"
                         >
-                            <Plus className="h-4 w-4" />
+                            <IconPlus className="h-4 w-4" />
                             Add Phone
                         </Button>
                     </div>
 
-                    <AnimatePresence>
-                        {phoneFields.fields.map((field, index) => (
-                            <motion.div
-                                onAnimationComplete={(definition) => {
-                                    if (
-                                        index ===
-                                            phoneFields.fields.length - 1 &&
-                                        typeof definition === 'object' &&
-                                        definition !== null &&
-                                        'id' in definition &&
-                                        definition.id === 'exit-animation'
-                                    ) {
-                                        //TODO: this doesn't work if I reset the form
-                                        phoneFields.remove(index);
+                    {showForm && (
+                        <AnimatePresence>
+                            {phoneFields.fields.map((field, index) => (
+                                <motion.div
+                                    onAnimationComplete={(def) =>
+                                        handleAnimationComplete(def, index)
                                     }
-                                }}
-                                key={field.id}
-                                initial={{
-                                    opacity: 0,
-                                    height: 0,
-                                    id: 'initial-animation',
-                                }}
-                                animate={{
-                                    opacity: 1,
-                                    height: 'auto',
-                                    id: 'current-animation',
-                                }}
-                                exit={{
-                                    opacity: 0,
-                                    height: 0,
-                                    id: 'exit-animation',
-                                }}
-                                transition={{ duration: 0.2 }}
-                            >
-                                <div className="p-4">
-                                    {index > 0 && (
-                                        <Separator className="my-4 flex-none" />
-                                    )}
-                                    <div className="mb-4 flex items-start justify-between">
-                                        <h3 className="text-sm font-medium">
-                                            Phone #{index + 1}
-                                        </h3>
+                                    key={field.id}
+                                    initial={{
+                                        opacity: 0,
+                                        height: 0,
+                                        id: 'initial-animation',
+                                    }}
+                                    animate={{
+                                        opacity: 1,
+                                        height: 'auto',
+                                        id: 'current-animation',
+                                    }}
+                                    exit={{
+                                        opacity: 0,
+                                        height: 0,
+                                        id: 'exit-animation',
+                                    }}
+                                    transition={{ duration: 0.2 }}
+                                >
+                                    <div className="p-4">
                                         {index > 0 && (
-                                            <Button
-                                                type="button"
-                                                variant="ghost"
-                                                size="sm"
-                                                onClick={() =>
-                                                    phoneFields.remove(index)
-                                                }
-                                                className="text-red-500 hover:text-red-700"
-                                            >
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
+                                            <Separator className="my-4 flex-none" />
                                         )}
-                                    </div>
-
-                                    <div className="grid gap-4">
-                                        <TextFormField
-                                            control={form.control}
-                                            name={`phones.${index}.number`}
-                                            placeholder="8763547211"
-                                            label="Phone Number"
-                                        />
-                                        <SelectFormField
-                                            label="Phone Type"
-                                            control={form.control}
-                                            name={`phones.${index}.type`}
-                                            placeholder="Select a phone type"
-                                            options={cellTypes.map((type) => {
-                                                return {
-                                                    value: type,
-                                                    textValue:
-                                                        type
-                                                            .charAt(0)
-                                                            .toUpperCase() +
-                                                        type
-                                                            .slice(1)
-                                                            .toLowerCase(),
-                                                };
-                                            })}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name={`phones.${index}.whatsapp`}
-                                            render={({ field }) => (
-                                                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                                                    <FormControl>
-                                                        <Checkbox
-                                                            checked={
-                                                                field.value
-                                                            }
-                                                            onCheckedChange={
-                                                                field.onChange
-                                                            }
-                                                        />
-                                                    </FormControl>
-                                                    <div className="space-y-1 leading-none">
-                                                        <FormLabel>
-                                                            WhatsApp Available
-                                                        </FormLabel>
-                                                        <FormDescription>
-                                                            Check if this number
-                                                            can be reached via
-                                                            WhatsApp.
-                                                        </FormDescription>
-                                                    </div>
-                                                </FormItem>
+                                        <div className="mb-4 flex items-start justify-between">
+                                            <h3 className="text-sm font-medium">
+                                                Phone #{index + 1}
+                                            </h3>
+                                            {index > 0 && (
+                                                <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={() => {
+                                                        phoneFields.remove(
+                                                            index,
+                                                        );
+                                                    }}
+                                                    className="text-red-500 hover:text-red-700"
+                                                >
+                                                    <IconTrash className="h-4 w-4" />
+                                                </Button>
                                             )}
-                                        />
+                                        </div>
+
+                                        <div className="grid gap-4">
+                                            <TextFormField
+                                                control={form.control}
+                                                name={`phones.${index}.number`}
+                                                placeholder="8763547211"
+                                                label="Phone Number"
+                                            />
+                                            <SelectFormField
+                                                label="Phone Type"
+                                                control={form.control}
+                                                name={`phones.${index}.type`}
+                                                placeholder="Select a phone type"
+                                                options={cellTypes.map(
+                                                    (type) => {
+                                                        return {
+                                                            value: type,
+                                                            textValue:
+                                                                type
+                                                                    .charAt(0)
+                                                                    .toUpperCase() +
+                                                                type
+                                                                    .slice(1)
+                                                                    .toLowerCase(),
+                                                        };
+                                                    },
+                                                )}
+                                            />
+                                            <FormField
+                                                control={form.control}
+                                                name={`phones.${index}.whatsapp`}
+                                                render={({ field }) => (
+                                                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                                                        <FormControl>
+                                                            <Checkbox
+                                                                checked={
+                                                                    field.value
+                                                                }
+                                                                onCheckedChange={
+                                                                    field.onChange
+                                                                }
+                                                            />
+                                                        </FormControl>
+                                                        <div className="space-y-1 leading-none">
+                                                            <FormLabel>
+                                                                WhatsApp
+                                                                Available
+                                                            </FormLabel>
+                                                            <FormDescription>
+                                                                Check if this
+                                                                number can be
+                                                                reached via
+                                                                WhatsApp.
+                                                            </FormDescription>
+                                                        </div>
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </div>
                                     </div>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </AnimatePresence>
+                                </motion.div>
+                            ))}
+                        </AnimatePresence>
+                    )}
                 </div>
-                <div className="flex justify-end space-x-4">
-                    <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => form.reset()}
-                    >
-                        Reset
-                    </Button>
-                    <Button
-                        type="submit"
-                        disabled={
-                            !form.formState.isDirty
-                            // || !form.formState.isValid
-                        }
-                    >
-                        Save Changes
-                    </Button>
-                </div>
+                <FormAction
+                    reset={{
+                        onClick: () => resetForm(),
+                        disabled: !form.formState.isDirty,
+                    }}
+                    submit={{
+                        disabled: !form.formState.isDirty,
+                    }}
+                />
             </form>
         </Form>
     );
