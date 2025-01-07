@@ -29,7 +29,6 @@ export const PhoneField: FC<PhoneFieldProps> = ({
     onRemove,
     cellTypes,
 }) => {
-    console.log('Rendering animated Phone Field', index);
     return (
         <div className="p-4">
             {index > 0 && <Separator className="my-4 flex-none" />}

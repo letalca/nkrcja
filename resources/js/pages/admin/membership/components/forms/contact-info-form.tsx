@@ -3,37 +3,37 @@ import { Form } from '@/components/ui/form';
 import { handleFormErrors } from '@/lib/handle-form-errors';
 import { ClubMember } from '@/types';
 import { IconPlus } from '@tabler/icons-react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { useFormContext } from '../../context/form/use-form-context';
 import { api } from './api';
 import { FormAction } from './components/actions';
-import { AnimatedDiv } from './components/animated-div';
+import { PhoneField } from './components/phone-field';
 import { CellType, cellTypes, phoneResolver, Phones } from './schemas';
 
 export default ContactInfoForm;
 
 function ContactInfoForm() {
-    const [showForm, setShowingForm] = useState(true);
     const { member, setIsFormDirty, updateMember } = useFormContext();
 
     const getFormDefaults = useCallback(
-        (member: ClubMember): Phones => ({
-            phones: member.phones?.length
-                ? member.phones.map((phone) => ({
-                      number: phone.number,
-                      primary: phone.primary,
-                      type: phone.type as CellType,
-                      whatsapp: Boolean(phone.whatsapp),
-                  }))
-                : [
-                      {
-                          number: '',
-                          primary: true,
-                          type: 'cell',
-                          whatsapp: false,
-                      },
-                  ],
+        (member?: ClubMember): Phones => ({
+            phones:
+                member && member.phones?.length
+                    ? member.phones.map((phone) => ({
+                          number: phone.number,
+                          primary: phone.primary,
+                          type: phone.type as CellType,
+                          whatsapp: Boolean(phone.whatsapp),
+                      }))
+                    : [
+                          {
+                              number: '',
+                              primary: true,
+                              type: 'cell',
+                              whatsapp: false,
+                          },
+                      ],
         }),
         [],
     );
@@ -67,19 +67,11 @@ function ContactInfoForm() {
         }
     };
 
-    useEffect(() => {
-        if (!showForm) {
-            form.reset(getFormDefaults(member));
-            setShowingForm(true);
-            setIsFormDirty(false);
-        }
-    }, [showForm, member, form, setIsFormDirty, getFormDefaults]);
-
     const resetForm = (clubMember?: ClubMember) => {
+        form.reset(getFormDefaults(clubMember));
         if (clubMember) {
             updateMember(clubMember);
         }
-        setShowingForm(false);
     };
 
     useEffect(() => {
@@ -112,13 +104,22 @@ function ContactInfoForm() {
                         </Button>
                     </div>
 
-                    {showForm && (
-                        <AnimatedDiv
-                            control={form.control as unknown as never}
-                            phoneFields={phoneFields}
-                            cellTypes={cellTypes as unknown as CellType[]}
-                        />
-                    )}
+                    <div>
+                        {phoneFields.fields.map((field, index) => (
+                            <div key={field.id}>
+                                <PhoneField
+                                    onRemove={() => phoneFields.remove(index)}
+                                    index={index}
+                                    isRemovable={index > 0}
+                                    cellTypes={
+                                        cellTypes as unknown as CellType[]
+                                    }
+                                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                    control={form.control as unknown as any}
+                                />
+                            </div>
+                        ))}
+                    </div>
                 </div>
                 <FormAction
                     reset={{
