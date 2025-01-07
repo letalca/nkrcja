@@ -1,4 +1,3 @@
-import { Button } from '@/components/button';
 import { DateFormField } from '@/components/form-fields/date-form-field';
 import { SelectFormField } from '@/components/form-fields/select-form-field';
 import { TextFormField } from '@/components/form-fields/text-form-field';
@@ -8,6 +7,7 @@ import { ClubMember } from '@/types';
 import { useForm } from 'react-hook-form';
 import { useFormContext } from '../../context/form/use-form-context';
 import { api } from './api';
+import { FormAction } from './components/actions';
 import { type PersonalDataForm, personalDataResolver } from './schemas';
 
 export default function PersonalDataForm() {
@@ -153,23 +153,13 @@ export default function PersonalDataForm() {
                         }))}
                     />
                 </div>
-
-                <div className="flex justify-end space-x-4">
-                    <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => form.reset()}
-                    >
-                        Reset
-                    </Button>
-                    <Button
-                        type="submit"
-                        // disabled={!form.formState.isDirty || !isFormValid}
-                        disabled={!form.formState.isDirty}
-                    >
-                        Save Changes
-                    </Button>
-                </div>
+                <FormAction
+                    reset={{
+                        onClick: () => form.reset(),
+                        disabled: !form.formState.isDirty,
+                    }}
+                    submit={{ disabled: !form.formState.isDirty }}
+                />
             </form>
         </Form>
     );
